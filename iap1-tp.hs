@@ -85,6 +85,7 @@ pertenece _ [] = False
 pertenece t (x:xs)
     | t == x = True
     | otherwise = pertenece t xs
+-----------------------------------------------------Sebastian----------------------------------------------------------------
 
 mismosElementos :: Eq a => [a] -> [a] -> Bool
 mismosElementos [] []= True
@@ -101,7 +102,6 @@ mismosElementos (x:xs) ys
             |otherwise = x : eliminar t xs --armamos una nueva lista con el elemento x a comparar y llamamos a la recursion 
 
 
------------------------------------------------------Sebastian----------------------------------------------------------------
 sinRepetidos :: Eq a => [a] -> Bool 
 sinRepetidos [] = True
 --llamo a estaRepetido para ver si el primer elemento se repite en el resto de la lista
