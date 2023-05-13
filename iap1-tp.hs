@@ -87,42 +87,40 @@ pertenece t (x:xs)
     | otherwise = pertenece t xs
 
 mismosElementos :: Eq a => [a] -> [a] -> Bool
-mismosElementos [] [] = True
-mismosElementos [] _  = False
-mismosElementos _  [] = False
+mismosElementos [] []= True
+mismosElementos [] _ = False
+mismosElementos _ [] = False
 mismosElementos (x:xs) ys
-    | pertenece x ys = mismosElementos xs (eliminar x ys) --verificamos que el primer elemento de la lista xs('x') esta en la lista ys de forma recursiva, si coinciden los valores se devuelve una nueva lista xs e ys sin esos valores coincidentes y se la llama de nuevo
-    | otherwise      = False
+    |pertenece x ys = mismosElementos xs (eliminar x ys) --verificamos que el primer elemento de la lsita xs('x') esta en la lista ys de forma recursiva, si coinciden los valores llamamos recursivamente a la lista sin esos valores ya comparados
+    |otherwise = False
     where
         eliminar :: (Eq t) => t -> [t] -> [t]
         eliminar _ [] = []
         eliminar t (x:xs)
-            | t == x    = xs -- si t es igual a x devolvemos el resto de la lista sin el elemento en comun
-            | otherwise = x : eliminar t xs
+            |t == x = xs --si t es igual a x devolvemos el resto de la lista con el elemento en comun
+            |otherwise = x : eliminar t xs --armamos una nueva lista con el elemento x a comparar y llamamos a la recursion 
+
+
 
 
 -- sinRepetidos verifica que no hayan elementos repetidos en una lista. Nos fijamos que el elemento l[x] /= L[y]
-sinRepetidos :: Eq a => [a] -> Bool
+
+sinRepetidos :: Eq a => [a] -> Bool 
 sinRepetidos [] = True
 --llamo a estaRepetido para ver si el primer elemento se repite en el resto de la lista
--- luego llamamos recursivamente la funcion para chequear el resto de la lista
-sinRepetidos (x:xs) = not (estaRepetido x xs) && sinRepetidos xs 
+-- luego llamamos recursivamente la funcion para chequear el resto de la lista xs
+sinRepetidos (x:xs) = not(estaRepetido x xs) && sinRepetidos xs
     where
         estaRepetido :: Eq a => a -> [a] -> Bool
         estaRepetido _ [] = False
         estaRepetido e (y:ys)
-            | e == y = True
-            | otherwise = estaRepetido e ys
-
+            |e == y = True
+            |otherwise = estaRepetido e ys
 relacionadosDirecto :: Usuario -> Usuario -> RedSocial -> Bool
-relacionadosDirecto u1 u2 rs = pertenece (u1, u2) (relaciones rs) || pertenece (u2, u1) (relaciones rs)
-
-
--- let redSocialEjemplo = ([(1,"usuario1"),(2,"usuario2"),(3,"usuario3")],
---                       [((1,"usuario1"),(2,"usuario2")),((2,"usuario2"),(3,"usuario3"))],
---                       [((1,"usuario1"),"hola a todos",
---                       [(2,"usuario2"),(3,"usuario3")])])
-
+relacionadosDirecto u1 u2 rs = pertenece (u1,u2) (relaciones rs) || pertenece (u2, u1) (relaciones rs)
+let redSocialEjemplo = ([(1,"Pedro"),(2,"Ana"),(3,"Martin")],
+                        [((1,"Pedro"),(2,"Ana")),((2,"Ana"),(3,"Martin"))],
+                        [((1,"Pedro"),"Hola a todos",[(2,"Ana"),(3,"Martin")])])
 
 
 ---------------------------Agus------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
