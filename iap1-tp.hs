@@ -85,6 +85,7 @@ pertenece _ [] = False
 pertenece t (x:xs)
     | t == x = True
     | otherwise = pertenece t xs
+-----------------------------------------------------Sebastian----------------------------------------------------------------
 
 mismosElementos :: Eq a => [a] -> [a] -> Bool
 mismosElementos [] []= True
@@ -101,10 +102,6 @@ mismosElementos (x:xs) ys
             |otherwise = x : eliminar t xs --armamos una nueva lista con el elemento x a comparar y llamamos a la recursion 
 
 
-
-
--- sinRepetidos verifica que no hayan elementos repetidos en una lista. Nos fijamos que el elemento l[x] /= L[y]
-
 sinRepetidos :: Eq a => [a] -> Bool 
 sinRepetidos [] = True
 --llamo a estaRepetido para ver si el primer elemento se repite en el resto de la lista
@@ -116,11 +113,18 @@ sinRepetidos (x:xs) = not(estaRepetido x xs) && sinRepetidos xs
         estaRepetido e (y:ys)
             |e == y = True
             |otherwise = estaRepetido e ys
+
 relacionadosDirecto :: Usuario -> Usuario -> RedSocial -> Bool
 relacionadosDirecto u1 u2 rs = pertenece (u1,u2) (relaciones rs) || pertenece (u2, u1) (relaciones rs)
-let redSocialEjemplo = ([(1,"Pedro"),(2,"Ana"),(3,"Martin")],
-                        [((1,"Pedro"),(2,"Ana")),((2,"Ana"),(3,"Martin"))],
-                        [((1,"Pedro"),"Hola a todos",[(2,"Ana"),(3,"Martin")])])
+--let redSocialEjemplo = ([(1,"Pedro"),(2,"Ana"),(3,"Martin")],
+--                        [((1,"Pedro"),(2,"Ana")),((2,"Ana"),(3,"Martin"))],
+--                        [((1,"Pedro"),"Hola a todos",[(2,"Ana"),(3,"Martin")])])
+
+cadenaDeAmigos :: [Usuario] -> RedSocial -> Bool
+cadenaDeAmigos (u1:u2:us) rs 
+    |relacionadosDirecto u1 u2 rs = cadenaDeAmigos (u2:us) rs 
+    |otherwise = False
+cadenaDeAmigos _ _ = True   
 
 
 ---------------------------Agus------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
