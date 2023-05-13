@@ -100,8 +100,8 @@ mismosElementos (x:xs) ys
             |t == x = xs --si t es igual a x devolvemos el resto de la lista con el elemento en comun
             |otherwise = x : eliminar t xs --armamos una nueva lista con el elemento x a comparar y llamamos a la recursion 
 
--- sinRepetidos verifica que no hayan elementos repetidos en una lista. Nos fijamos que el elemento l[x] /= L[y]
 
+-----------------------------------------------------Sebastian----------------------------------------------------------------
 sinRepetidos :: Eq a => [a] -> Bool 
 sinRepetidos [] = True
 --llamo a estaRepetido para ver si el primer elemento se repite en el resto de la lista
