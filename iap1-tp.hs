@@ -47,18 +47,18 @@ nombresDeUsuarios red = proyectarNombres (usuarios red) -- red representa una in
 
 --[EJERCICIO 2]
 
---funcio auxiliar para amigosDe
-agregarAmigos :: Usuario -> [Relacion] -> [Usuario]
-agregarAmigos _ [] = []
-agregarAmigos usuarioActual ((usuario1, usuario2) : relacionados)
-  | esAmigoDe usuarioActual usuario1 usuario2 = usuario2 : agregarAmigos usuarioActual relacionados
-  | esAmigoDe usuarioActual usuario2 usuario1 = usuario1 : agregarAmigos usuarioActual relacionados
-  | otherwise = agregarAmigos usuarioActual relacionados
+----funcio auxiliar para amigosDe
+--agregarAmigos :: Usuario -> [Relacion] -> [Usuario]
+--agregarAmigos _ [] = []
+--agregarAmigos usuarioActual ((usuario1, usuario2) : relacionados)
+--  | esAmigoDe usuarioActual usuario1 usuario2 = usuario2 : agregarAmigos usuarioActual relacionados
+--  | esAmigoDe usuarioActual usuario2 usuario1 = usuario1 : agregarAmigos usuarioActual relacionados
+--  | otherwise = agregarAmigos usuarioActual relacionados
  
-amigosDe :: RedSocial -> Usuario -> [Usuario]
-amigosDe (usuarios, relaciones, _) usuarioActual
-  | not (usuarioValido usuarioActual) || not (perteneceUsuario usuarioActual) = []
-  | otherwise = agregarAmigos usuarioActual relaciones
+--amigosDe :: RedSocial -> Usuario -> [Usuario]
+--amigosDe (usuarios, relaciones, _) usuarioActual
+--  | not (usuarioValido usuarioActual) || not (perteneceUsuario usuarioActual) = []
+--  | otherwise = agregarAmigos usuarioActual relaciones
 
 
 
