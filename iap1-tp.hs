@@ -36,9 +36,16 @@ likesDePublicacion :: Publicacion -> [Usuario]
 likesDePublicacion (_, _, us) = us
 
 -- Ejercicios
-
+--[EJERCICIO 1]
+-- funcion auxiliar para nombresDeUsuarios. Que funciona tomando a los nombres de los usuarios y los coloca en una lista de strings
+proyectarNombres :: [Usuarios] -> [String]
+proyectarNombres []=[] -- caso base, si no hay nombres devuelve la lista vacia 
+proyectarNombres (( _ , nombres): restoDeUsuarios) = nombres : proyectarNombres restoDeUsuarios --ignora el primer elem de los usuarios que serian los id y me quedo solo con los nombres, a ellos los agrego a una lista recursivamente
+-- toma redSocial  y devuelve una lista de strings 
 nombresDeUsuarios :: RedSocial -> [String]
-nombresDeUsuarios = undefined
+nombresDeUsuarios red = proyectarNombres (usuarios red) -- red representa una instancia de redSocial y al llamar a proyectarNombres obtiene los nombres de la lista correspondientes a esa redsocial
+
+--[EJERCICIO 2]
 
 -- describir qué hace la función: .....
 amigosDe :: RedSocial -> Usuario -> [Usuario]
@@ -77,13 +84,48 @@ existeSecuenciaDeAmigos :: RedSocial -> Usuario -> Usuario -> Bool
 existeSecuenciaDeAmigos = undefined
 
 
--- Funciones auxiliares
-
+--Funciones Auxiliares
+---------------------------------------------------Matias-----------------------------------------------------------------------------
+--Devuelve True <=> existe un elemento e:t en l:[t]
 pertenece :: (Eq t) => t -> [t] -> Bool
 pertenece _ [] = False
-pertenece t (x:xs)
-    | t == x = True
-    | otherwise = pertenece t xs
+pertenece e (t:l)
+    | e == t = True
+    | otherwise = pertenece e l
+
+-- Devuelve True <=> los elementos de rels:[Relacion] son válidos y todos los usuarios participantes en las relaciones pertenencen a us:[Usuario]
+relacionesValidas :: [Usuario] -> [Relacion] -> Bool
+relacionesValidas us rels = 
+    usuariosDeRelacionValida us rels && 
+    relacionesAsimetricas rels && 
+    noHayRelacionesRepetidas rels
+
+-- Devuelve True <=> para todo elemento (a,b) en rels:[Relacion], a y b pertenecen a us:[Usuario]
+usuariosDeRelacionValida :: [Usuario] -> [Relacion] -> Bool
+usuariosDeRelacionValida _ [] = True
+usuariosDeRelacionValida us ((u1, u2):rels) 
+    | u1 /= u2 && pertenece u1 us && pertenece u2 us = usuariosDeRelacionValida us rels
+    | otherwise = False
+
+-- Devuelve True <=> para todo elemento (a,b) en rels:[Relacion], no existe (b,a)
+relacionesAsimetricas :: [Relacion] -> Bool
+relacionesAsimetricas [] = True
+relacionesAsimetricas ((u1, u2):rels)
+    | pertenece (u2, u1) rels == False = relacionesAsimetricas rels
+    | otherwise = False
+
+-- Devuelve True <=> no hay elementos que se repitan en rels:[Relacion]
+noHayRelacionesRepetidas :: [Relacion] -> Bool
+noHayRelacionesRepetidas [] = True
+noHayRelacionesRepetidas (r:rels)
+    | pertenece r rels == False = noHayRelacionesRepetidas rels
+    | otherwise = False
+
+-- Devuelve True <=> el último elemento de l:[t] es igual a e:t 
+terminaCon :: (Eq t) => t -> [t] -> Bool
+terminaCon _ [] = False
+terminaCon e [t] = e == t
+terminaCon e (t:l) = terminaCon e l
 
 ------------------------------------------Leo------------------------------------------
 
@@ -203,7 +245,7 @@ usuariosValidos []= True -- no tiene usuarios invalidos ni repetidos
 usuariosValidos (x: xs) = usuarioValido x && noHayIdRepetidos (x:xs) && usuariosValidos xs -- comprueba que la primer posicion se unica, si lo hace llama a usuarioValido y noHayIdRp. Si se cumple llama a la fucion usuariosValidos y devuelve true
 
 
---funcion que toma una red y una lista de usuarioas y devuelve treu si todos los usuarios pertenecen 
+--funcion que toma una red y una lista de usuarioas y devuelve true si todos los usuarios pertenecen 
 sonDeLaRed :: RedSocial -> [Usuario] -> Bool
 sonDeLaRed _[] = True -- si el usuario esta en la red devuelve True, sino:
 sonDeLaRed red (x:xs) = pertenece x (usuarios red) && sonDeLaRed red xs -- va verificando usuario por usuario sacando el primer elemento x si esta o no en la red, luego hace recursion con el resto de la lista xs
