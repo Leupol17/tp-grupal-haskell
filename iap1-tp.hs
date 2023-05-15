@@ -77,13 +77,50 @@ existeSecuenciaDeAmigos :: RedSocial -> Usuario -> Usuario -> Bool
 existeSecuenciaDeAmigos = undefined
 
 
+
 -- Funciones auxiliares
 
+--Devuelve True <=> existe un elemento e:t en l:[t]
 pertenece :: (Eq t) => t -> [t] -> Bool
 pertenece _ [] = False
-pertenece t (x:xs)
-    | t == x = True
-    | otherwise = pertenece t xs
+pertenece e (t:l)
+    | e == t = True
+    | otherwise = pertenece e l
+
+-- Devuelve True <=> los elementos de rels:[Relacion] son válidos y todos los usuarios participantes en las relaciones pertenencen a us:[Usuario]
+relacionesValidas :: [Usuario] -> [Relacion] -> Bool
+relacionesValidas us rels = 
+    usuariosDeRelacionValida us rels && 
+    relacionesAsimetricas rels && 
+    noHayRelacionesRepetidas rels
+
+-- Devuelve True <=> para todo elemento (a,b) en rels:[Relacion], a y b pertenecen a us:[Usuario]
+usuariosDeRelacionValida :: [Usuario] -> [Relacion] -> Bool
+usuariosDeRelacionValida _ [] = True
+usuariosDeRelacionValida us ((u1, u2):rels) 
+    | u1 /= u2 && pertenece u1 us && pertenece u2 us = usuariosDeRelacionValida us rels
+    | otherwise = False
+
+-- Devuelve True <=> para todo elemento (a,b) en rels:[Relacion], no existe (b,a)
+relacionesAsimetricas :: [Relacion] -> Bool
+relacionesAsimetricas [] = True
+relacionesAsimetricas ((u1, u2):rels)
+    | pertenece (u2, u1) rels == False = relacionesAsimetricas rels
+    | otherwise = False
+
+-- Devuelve True <=> no hay elementos que se repitan en rels:[Relacion]
+noHayRelacionesRepetidas :: [Relacion] -> Bool
+noHayRelacionesRepetidas [] = True
+noHayRelacionesRepetidas (r:rels)
+    | pertenece r rels == False = noHayRelacionesRepetidas rels
+    | otherwise = False
+
+-- Devuelve True <=> el último elemento de l:[t] es igual a e:t 
+terminaCon :: (Eq t) => t -> [t] -> Bool
+terminaCon _ [] = False
+terminaCon e [t] = e == t
+terminaCon e (t:l) = terminaCon e l
+
 
 ------------------------------------------Leo------------------------------------------
 
@@ -165,9 +202,6 @@ sinRepetidos (x:xs) = not(estaRepetido x xs) && sinRepetidos xs
 
 relacionadosDirecto :: Usuario -> Usuario -> RedSocial -> Bool
 relacionadosDirecto u1 u2 rs = pertenece (u1,u2) (relaciones rs) || pertenece (u2, u1) (relaciones rs)
---let redSocialEjemplo = ([(1,"Pedro"),(2,"Ana"),(3,"Martin")],
---                        [((1,"Pedro"),(2,"Ana")),((2,"Ana"),(3,"Martin"))],
---                        [((1,"Pedro"),"Hola a todos",[(2,"Ana"),(3,"Martin")])])
 
 cadenaDeAmigos :: [Usuario] -> RedSocial -> Bool
 cadenaDeAmigos (u1:u2:us) rs 
@@ -175,7 +209,10 @@ cadenaDeAmigos (u1:u2:us) rs
     |otherwise = False
 cadenaDeAmigos _ _ = True   
 
-
+redSocialValida :: RedSocial -> Bool
+redSocialValida ( usuarios, relaciones, publicaciones) =
+    usuariosValidos usuarios && relacionesValidas usuarios relaciones && publicacionesValidas usuarios publicaciones
+    
 ---------------------------Agus------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 --esta funcion toma como entrada Usuario y se asegura que su resultado:hace recursion continua hasta que se agoten los usuarios de la lista. 
@@ -203,7 +240,20 @@ usuariosValidos []= True -- no tiene usuarios invalidos ni repetidos
 usuariosValidos (x: xs) = usuarioValido x && noHayIdRepetidos (x:xs) && usuariosValidos xs -- comprueba que la primer posicion se unica, si lo hace llama a usuarioValido y noHayIdRp. Si se cumple llama a la fucion usuariosValidos y devuelve true
 
 
---funcion que toma una red y una lista de usuarioas y devuelve treu si todos los usuarios pertenecen 
+--funcion que toma una red y una lista de usuarios y devuelve treu si todos los usuarios pertenecen 
 sonDeLaRed :: RedSocial -> [Usuario] -> Bool
 sonDeLaRed _[] = True -- si el usuario esta en la red devuelve True, sino:
 sonDeLaRed red (x:xs) = pertenece x (usuarios red) && sonDeLaRed red xs -- va verificando usuario por usuario sacando el primer elemento x si esta o no en la red, luego hace recursion con el resto de la lista xs
+
+--[Ejercicio 6]
+publicacionesDe :: RedSocial-> Usuario -> [Publicacion] 
+publicacionesDe reds usuario 
+    |not(redSocialValida reds) || not (usuarioValido usuario) || not (pertenece usuario(usuarios reds)) = []
+    |otherwise publicacionesDe' (publicaciones red) usuario
+    where
+--la funcion auxiliar recorre la lista de publicaciones de la red, comprueba cuales fueron hechas por el usuario, las que cumplen se agregan a una lista de resultados,esto se repite hasta que se hayan revisado todas las publicaciones         
+        publicacionesDe' [] _ = []
+        publicacionesDe' (p:ps) u 
+            |usuarioDePublicacion p == u = p : publicacionesDe' ps u --si la publicacion evaluada es del usuario buscado agrega la publicacion a la lista y continua con el resto de publicaciones
+            |otherwise = publicacionesDe' ps u --si el usuario de la publicacion actual no coincide con el usuario buscado, continua con el resto de las publicaciones sin llamar nada
+
