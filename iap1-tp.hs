@@ -59,9 +59,9 @@ nombresDeUsuarios red = proyectarNombres (usuarios red)
 amigosDe :: RedSocial -> Usuario -> [Usuario]
 amigosDe redSocial usuario = amigos usuario (relaciones redSocial)
     where amigos usuarioActual [] = []
-          amigos usuarioActual (r, rs)
-          |(relacion1:r) == usuarioActual = relacion2 r: amigos usuarioActual rs
-          |(relacion2:r) == usuarioActual = relacion1 r: amigos usuarioActual rs
+          amigos usuarioActual ((relacion1, relacion2):rs)
+          |relacion1 == usuarioActual = relacion2 : amigos usuarioActual rs
+          |relacion2 == usuarioActual = relacion1 : amigos usuarioActual rs
           |otherwise = amigos usuarioActual rs
           
 -- describir qué hace la función: .....
