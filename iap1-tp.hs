@@ -38,19 +38,32 @@ likesDePublicacion (_, _, us) = us
 -- Ejercicios
 --[EJERCICIO 1]
 -- funcion auxiliar para nombresDeUsuarios. Que funciona tomando a los nombres de los usuarios y los coloca en una lista de strings
+-- caso base, si no hay nombres devuelve la lista vacia 
+ --ignora el primer elem de los usuarios que serian los id y me quedo solo con los nombres, a ellos los agrego a una lista recursivamente
 proyectarNombres :: [Usuarios] -> [String]
-proyectarNombres []=[] -- caso base, si no hay nombres devuelve la lista vacia 
-proyectarNombres (( _ , nombres): restoDeUsuarios) = nombres : proyectarNombres restoDeUsuarios --ignora el primer elem de los usuarios que serian los id y me quedo solo con los nombres, a ellos los agrego a una lista recursivamente
--- toma redSocial  y devuelve una lista de strings 
+proyectarNombres []=[] 
+proyectarNombres (( _ , nombres): restoDeUsuarios) = nombres : proyectarNombres restoDeUsuarios
+-- toma redSocial  y devuelve una lista de strings
+-- red representa una instancia de redSocial y al llamar a proyectarNombres obtiene los nombres de la lista correspondientes a esa redsocial 
 nombresDeUsuarios :: RedSocial -> [String]
-nombresDeUsuarios red = proyectarNombres (usuarios red) -- red representa una instancia de redSocial y al llamar a proyectarNombres obtiene los nombres de la lista correspondientes a esa redsocial
+nombresDeUsuarios red = proyectarNombres (usuarios red) 
 
 --[EJERCICIO 2]
 
--- describir qué hace la función: .....
+--recibe redSocial y un usuario y devuelve una lista de amigos del usuario actual en dicha red social
+-- la funcion amigosDe llama a la condicion amigos con el usuario dado y las relaciones de la red social, luego devuelve la lista de amigon sinRepetidos
+--la condicion where amigos, toma un usuario y una lista de relaciones de la red social. compreba si el usuarioActual coincide con las relaciones 1 o 2 de cada relacion en la lista
+--si coincide con el 1 se agrega relacion2 a la lista de amigos y se llama recursivamente.
+--si coincide con el 2 se agrega relacion1 a la lista de amigos.
+--sino se llama al resto (rs) recursivamente con las relaciones de las listas 
 amigosDe :: RedSocial -> Usuario -> [Usuario]
-amigosDe = undefined
-
+amigosDe redSocial usuario = amigos usuario (relaciones redSocial)
+    where amigos usuarioActual [] = []
+          amigos usuarioActual (r, rs)
+          |(relacion1:r) == usuarioActual = relacion2 r: amigos usuarioActual rs
+          |(relacion2:r) == usuarioActual = relacion1 r: amigos usuarioActual rs
+          |otherwise = amigos usuarioActual rs
+          
 -- describir qué hace la función: .....
 cantidadDeAmigos :: RedSocial -> Usuario -> Int
 cantidadDeAmigos = undefined
@@ -217,7 +230,9 @@ cadenaDeAmigos (u1:u2:us) rs
     |otherwise = False
 cadenaDeAmigos _ _ = True   
 
-
+redSocialValida :: RedSocial -> Bool
+redSocialValida ( usuarios, relaciones, publicaciones) =
+    usuariosValidos usuarios && relacionesValidas usuarios relaciones && publicacionesValidas usuarios publicaciones
 ---------------------------Agus------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 --esta funcion toma como entrada Usuario y se asegura que su resultado:hace recursion continua hasta que se agoten los usuarios de la lista. 
