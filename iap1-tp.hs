@@ -60,7 +60,7 @@ amigos usuarioActual ((relacion1, relacion2): rs)
     |otherwise = amigos usuarioActual rs
 
 {-si no son validos;red social valida, usuario valido y usuario que pertenece a la red social; devolvera una lista vacia. si todas se cumplen,
- llama la funcion amigos con el usuario actual y la lista de relaciones dentro de la red social para posicionar los amigos entrados.
+ llama la funcion amigos con el usuario actual y la lista de relaciones dentro de la red social para posicionar los amigos encontrados.
  Devuelve la lita de amigos del usuario en la red social -}
 amigosDe :: RedSocial -> Usuario -> [Usuario]
 amigosDe redSocial usuario
