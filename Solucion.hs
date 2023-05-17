@@ -61,14 +61,19 @@ estaRobertoCarlos = undefined
 publicacionesDe :: RedSocial -> Usuario -> [Publicacion]
 publicacionesDe = undefined
 
--- describir qué hace la función: .....
+-- describir qué hace la función: Devuelve el resultado de la función obtenerPublicacionesQueLeGustanA, se pasa una lista vacía que sirve para mantener referencia de res
 publicacionesQueLeGustanA :: RedSocial -> Usuario -> [Publicacion]
-publicacionesQueLeGustanA (_,_,[]) _ = []
-publicacionesQueLeGustanA (users,rels,(p:pubs)) u
-    | pertenece u (likesDePublicacion p) = p : publicacionesQueLeGustanA (users,rels,pubs) u
-    | otherwise = publicacionesQueLeGustanA (users,rels,pubs) u
+publicacionesQueLeGustanA red us = obtenerPublicacionesQueLeGustanA red us []
 
--- describir qué hace la función: .....
+-- Devuelve todas las publicaciones de la red que tienen en su lista de likes a u:Usuario y que no pertenezcan a res:[Publicacion]
+obtenerPublicacionesQueLeGustanA :: RedSocial -> Usuario -> [Publicacion] -> [Publicacion]
+obtenerPublicacionesQueLeGustanA (_,_,[]) _ _ = []
+obtenerPublicacionesQueLeGustanA (users,rels,(p:pubs)) u res
+    | pertenece u (likesDePublicacion p) && pertenece p res == False = p : obtenerPublicacionesQueLeGustanA (users,rels,pubs) u nuevoRes
+    | otherwise = obtenerPublicacionesQueLeGustanA (users,rels,pubs) u res
+    where nuevoRes = (p:res)
+
+-- describir qué hace la función: Conmpara los elementos de la lista publicacionesQueLeGustanA red:RedSocial u1:Usuario con publicacionesQueLeGustanA red u2:Usuario
 lesGustanLasMismasPublicaciones :: RedSocial -> Usuario -> Usuario -> Bool
 lesGustanLasMismasPublicaciones red u1 u2 =
     mismosElementos (publicacionesQueLeGustanA red u1) (publicacionesQueLeGustanA red u2)
