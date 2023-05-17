@@ -59,21 +59,14 @@ amigos usuarioActual ((relacion1, relacion2): rs)
     |relacion2 == usuarioActual = relacion1 : amigos usuarioActual rs
     |otherwise = amigos usuarioActual rs
 
-----funcio auxiliar para amigosDe
---agregarAmigos :: Usuario -> [Relacion] -> [Usuario]
---agregarAmigos _ [] = []
---agregarAmigos usuarioActual ((usuario1, usuario2) : relacionados)
---  | esAmigoDe usuarioActual usuario1 usuario2 = usuario2 : agregarAmigos usuarioActual relacionados
---  | esAmigoDe usuarioActual usuario2 usuario1 = usuario1 : agregarAmigos usuarioActual relacionados
---  | otherwise = agregarAmigos usuarioActual relacionados
- 
---amigosDe :: RedSocial -> Usuario -> [Usuario]
---amigosDe (usuarios, relaciones, _) usuarioActual
---  | not (usuarioValido usuarioActual) || not (perteneceUsuario usuarioActual) = []
---  | otherwise = agregarAmigos usuarioActual relaciones
-
-
-
+{-si no son validos;red social valida, usuario valido y usuario que pertenece a la red social; devolvera una lista vacia. si todas se cumplen,
+ llama la funcion amigos con el usuario actual y la lista de relaciones dentro de la red social para posicionar los amigos encontrados.
+ Devuelve la lita de amigos del usuario en la red social -}
+amigosDe :: RedSocial -> Usuario -> [Usuario]
+amigosDe redSocial usuario
+    | not(redSocialValida redSocial) || not(usuarioValido usuario) || not(pertenece usuario(usuarios redSocial)) =[]
+    | otherwise = amigos usuario(relacion redSocial)
+          
 -- describir qué hace la función: .....
 cantidadDeAmigos :: RedSocial -> Usuario -> Int
 cantidadDeAmigos = undefined
