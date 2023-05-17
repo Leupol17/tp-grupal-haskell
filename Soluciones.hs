@@ -57,8 +57,16 @@ estaRobertoCarlos :: RedSocial -> Bool
 estaRobertoCarlos = undefined
 
 -- describir qué hace la función: .....
-publicacionesDe :: RedSocial -> Usuario -> [Publicacion]
-publicacionesDe = undefined
+publicacionesDe :: RedSocial-> Usuario -> [Publicacion] 
+publicacionesDe red usuario 
+    | not(redSocialValida red) || not (usuarioValido usuario) || not (pertenece usuario(usuarios red)) = []
+    | otherwise = publicacionesDe' (publicaciones red) usuario
+    where
+        publicacionesDe' [] _ = []
+        publicacionesDe' (p:ps) u 
+            |usuarioDePublicacion p == u = p : publicacionesDe' ps u --si la publicacion evaluada es del usuario buscado agrega la publicacion a la lista y continua con el resto de publicaciones
+            |otherwise = publicacionesDe' ps u --si el usuario de la publicacion actual no coincide con el usuario buscado, continua con el resto de las publicaciones sin llamar nada
+
 
 -- describir qué hace la función: .....
 publicacionesQueLeGustanA :: RedSocial -> Usuario -> [Publicacion]
@@ -67,10 +75,24 @@ publicacionesQueLeGustanA = undefined
 -- describir qué hace la función: .....
 lesGustanLasMismasPublicaciones :: RedSocial -> Usuario -> Usuario -> Bool
 lesGustanLasMismasPublicaciones = undefined
+--[Ejercicio 9]
 
 -- describir qué hace la función: .....
 tieneUnSeguidorFiel :: RedSocial -> Usuario -> Bool
-tieneUnSeguidorFiel = undefined
+tieneUnSeguidorFiel red usuario
+    | not (redSocialValida red) || not (usuarioValido usuario) || not (pertenece usuario (usuarios red)) = False
+    | otherwise = tieneUnSeguidorFiel' (usuarios red) (publicacionesDe red usuario)
+    where
+        tieneUnSeguidorFiel' [] _ = False
+        tieneUnSeguidorFiel' (u:us) ps
+            | esSeguidorFiel u ps = True
+            | otherwise = tieneUnSeguidorFiel' us ps
+
+        esSeguidorFiel :: Usuario -> [Publicacion] -> Bool
+        esSeguidorFiel _ [] = True
+        esSeguidorFiel u (p:ps)
+            | pertenece u (likesDePublicacion p) = esSeguidorFiel u ps
+            | otherwise = False
 
 -- describir qué hace la función: .....
 existeSecuenciaDeAmigos :: RedSocial -> Usuario -> Usuario -> Bool
@@ -244,16 +266,3 @@ usuariosValidos (x: xs) = usuarioValido x && noHayIdRepetidos (x:xs) && usuarios
 sonDeLaRed :: RedSocial -> [Usuario] -> Bool
 sonDeLaRed _[] = True -- si el usuario esta en la red devuelve True, sino:
 sonDeLaRed red (x:xs) = pertenece x (usuarios red) && sonDeLaRed red xs -- va verificando usuario por usuario sacando el primer elemento x si esta o no en la red, luego hace recursion con el resto de la lista xs
-
---[Ejercicio 6]
-publicacionesDe :: RedSocial-> Usuario -> [Publicacion] 
-publicacionesDe reds usuario 
-    |not(redSocialValida reds) || not (usuarioValido usuario) || not (pertenece usuario(usuarios reds)) = []
-    |otherwise publicacionesDe' (publicaciones red) usuario
-    where
---la funcion auxiliar recorre la lista de publicaciones de la red, comprueba cuales fueron hechas por el usuario, las que cumplen se agregan a una lista de resultados,esto se repite hasta que se hayan revisado todas las publicaciones         
-        publicacionesDe' [] _ = []
-        publicacionesDe' (p:ps) u 
-            |usuarioDePublicacion p == u = p : publicacionesDe' ps u --si la publicacion evaluada es del usuario buscado agrega la publicacion a la lista y continua con el resto de publicaciones
-            |otherwise = publicacionesDe' ps u --si el usuario de la publicacion actual no coincide con el usuario buscado, continua con el resto de las publicaciones sin llamar nada
-
