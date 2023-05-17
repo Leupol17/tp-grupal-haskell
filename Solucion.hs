@@ -38,12 +38,14 @@ likesDePublicacion (_, _, us) = us
 
 -- Ejercicios
 --[EJERCICIO 1]
--- funcion auxiliar para nombresDeUsuarios. Que funciona tomando a los nombres de los usuarios y los coloca en una lista de strings
--- caso base, si no hay nombres devuelve la lista vacia 
- --ignora el primer elem de los usuarios que serian los id y me quedo solo con los nombres, a ellos los agrego a una lista recursivamente
+{- funcion auxiliar para nombresDeUsuarios. Que funciona verificando que primero no esten repetidos las entadas en la lista y luego, toma a los nombres de los usuarios y
+ los coloca en una lista de strings caso base, si no hay nombres devuelve la lista vacia.
+ignora el primer elem de los usuarios que serian los id y me quedo solo con los nombres, a ellos los agrego a una lista recursivamente-}
 proyectarNombres :: [Usuarios] -> [String]
 proyectarNombres []=[] 
-proyectarNombres (( _ , nombres): restoDeUsuarios) = nombres : proyectarNombres restoDeUsuarios
+proyectarNombres (( _ , nombres): restoDeUsuarios) 
+    | not(pertenece nombres restoDeUsuarios) = nombres : proyectarNombres restoDeUsuarios
+    | otherwise = proyectarNombres restoDeUsuarios
 -- toma redSocial  y devuelve una lista de strings
 -- red representa una instancia de redSocial y al llamar a proyectarNombres obtiene los nombres de la lista correspondientes a esa redsocial 
 nombresDeUsuarios :: RedSocial -> [String]
