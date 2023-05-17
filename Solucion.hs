@@ -51,14 +51,14 @@ nombresDeUsuarios red = proyectarNombres (usuarios red)
 
 --[EJERCICIO 2]
 {- funcion auxiliar que toma un usuario y una lista de relaciones en donde recorre la lista y en cada relacion comprueba si el usuario actual es 
-uno de los dos usuarios en la relacion.Si se cumple, el otro usuario se añade a la lista de amigos. Devuelve una lista con todos los usuarios 
-que estan relacionados con el actual-}
-amigos ::Usuario -> [Relacion] -> [Usuario]
-amigos usuarioActual []= []
-amigos usuarioActual ((relacion1, relacion2): rs)
-    | relacion1 == usuarioActual = relacion2 : amigos usuarioActual rs
-    |relacion2 == usuarioActual = relacion1 : amigos usuarioActual rs
-    |otherwise = amigos usuarioActual rs
+uno de los dos usuarios en la relacion(primero debe verificar que no sean usuarios repetidos ya en la lista).Si se cumple, el otro usuario se añade a la lista de amigos.
+ Devuelve una lista con todos los usuarios que estan relacionados con el actual-}
+amigosDelUsuario ::Usuario -> [Relacion] -> [Usuario]
+amigosDelUsuario [] _ amigos = amigos
+amigosDelUsuario ((relacion1, relacion2): rs) usuario amigos
+    | relacion1 == usuario && not(pertenece relacion2 amigos) = amigosDelUsuario rs usuario (relacion2 : amigos)
+    |relacion2 == usuario && not(pertenece relacion1 amigos) = amigosDelUsuario rs usuario (relacion1 : amigos)
+    |otherwise = amigosDelUsuario rs usuario amigos
 
 {-si no son validos;red social valida, usuario valido y usuario que pertenece a la red social; devolvera una lista vacia. si todas se cumplen,
  llama la funcion amigos con el usuario actual y la lista de relaciones dentro de la red social para posicionar los amigos encontrados.
@@ -66,7 +66,7 @@ amigos usuarioActual ((relacion1, relacion2): rs)
 amigosDe :: RedSocial -> Usuario -> [Usuario]
 amigosDe redSocial usuario
     | not(redSocialValida redSocial) || not(usuarioValido usuario) || not(pertenece usuario(usuarios redSocial)) =[]
-    | otherwise = amigos usuario(relacion redSocial)
+    | otherwise = amigosDelUsuario (relacion redSocial) usuario []
           
 -- describir qué hace la función: .....
 cantidadDeAmigos :: RedSocial -> Usuario -> Int
