@@ -1,3 +1,4 @@
+module Solucion where 
 
 -- Completar con los datos del grupo
 --
@@ -97,51 +98,29 @@ tieneUnSeguidorFiel = undefined
 
 -- describir qué hace la función: .....
 existeSecuenciaDeAmigos :: RedSocial -> Usuario -> Usuario -> Bool
-existeSecuenciaDeAmigos = undefined
+existeSecuenciaDeAmigos red u1 u2 = esSecuenciaAmigos secuencia red
+  where
+    secuencia = obtenerSecuenciaAmigos red u1 u2
+----------Ejercicio 10----------
 
+-- Devuelve una lista en la que el primer elemento es u1, el último es u2, y todos los que hay entre ellos son la secuencia obtenida por obtenerAmigosEnComun
+obtenerSecuenciaAmigos :: RedSocial -> Usuario -> Usuario -> [Usuario]
+obtenerSecuenciaAmigos red u1 u2 = u1 : amigosEnComun ++ [u2]
+  where
+    amigosEnComun = obtenerAmigosEnComun red u1 u2
 
---Funciones Auxiliares
----------------------------------------------------Matias-----------------------------------------------------------------------------
---Devuelve True <=> existe un elemento e:t en l:[t]
-pertenece :: (Eq t) => t -> [t] -> Bool
-pertenece _ [] = False
-pertenece e (t:l)
-    | e == t = True
-    | otherwise = pertenece e l
+-- Devulve una lista en donde están todos los relacionados directos (vease relacionadosDirectos) de u1 y u2
+obtenerAmigosEnComun :: RedSocial -> Usuario -> Usuario -> [Usuario]
+obtenerAmigosEnComun ([],_,_) _ _ = []
+obtenerAmigosEnComun (u:us,rels,pubs) u1 u2 
+    | relacionadosDirecto u1 u (u:us,rels,pubs) && relacionadosDirecto u u2 (u:us,rels,pubs) = u : obtenerAmigosEnComun (us,rels,pubs) u1 u2 
+    | otherwise = obtenerAmigosEnComun (us,rels,pubs) u1 u2
 
--- Devuelve True <=> los elementos de rels:[Relacion] son válidos y todos los usuarios participantes en las relaciones pertenencen a us:[Usuario]
-relacionesValidas :: [Usuario] -> [Relacion] -> Bool
-relacionesValidas us rels = 
-    usuariosDeRelacionValida us rels && 
-    relacionesAsimetricas rels && 
-    noHayRelacionesRepetidas rels
-
--- Devuelve True <=> para todo elemento (a,b) en rels:[Relacion], a y b pertenecen a us:[Usuario]
-usuariosDeRelacionValida :: [Usuario] -> [Relacion] -> Bool
-usuariosDeRelacionValida _ [] = True
-usuariosDeRelacionValida us ((u1, u2):rels) 
-    | u1 /= u2 && pertenece u1 us && pertenece u2 us = usuariosDeRelacionValida us rels
-    | otherwise = False
-
--- Devuelve True <=> para todo elemento (a,b) en rels:[Relacion], no existe (b,a)
-relacionesAsimetricas :: [Relacion] -> Bool
-relacionesAsimetricas [] = True
-relacionesAsimetricas ((u1, u2):rels)
-    | pertenece (u2, u1) rels == False = relacionesAsimetricas rels
-    | otherwise = False
-
--- Devuelve True <=> no hay elementos que se repitan en rels:[Relacion]
-noHayRelacionesRepetidas :: [Relacion] -> Bool
-noHayRelacionesRepetidas [] = True
-noHayRelacionesRepetidas (r:rels)
-    | pertenece r rels == False = noHayRelacionesRepetidas rels
-    | otherwise = False
-
--- Devuelve True <=> el último elemento de l:[t] es igual a e:t 
-terminaCon :: (Eq t) => t -> [t] -> Bool
-terminaCon _ [] = False
-terminaCon e [t] = e == t
-terminaCon e (t:l) = terminaCon e l
+-- Devuelve True <=> todos los elementos de la lista tienen relacion directa con el siguiente elemnto en la lista.
+esSecuenciaAmigos :: [Usuario] -> RedSocial -> Bool
+esSecuenciaAmigos [] _ = True
+esSecuenciaAmigos [_] _ = True
+esSecuenciaAmigos (u1:u2:us) red = relacionadosDirecto u1 u2 red && esSecuenciaAmigos (u2:us) red
 
 ------------------------------------------Leo------------------------------------------
 
@@ -223,9 +202,6 @@ sinRepetidos (x:xs) = not(estaRepetido x xs) && sinRepetidos xs
 
 relacionadosDirecto :: Usuario -> Usuario -> RedSocial -> Bool
 relacionadosDirecto u1 u2 rs = pertenece (u1,u2) (relaciones rs) || pertenece (u2, u1) (relaciones rs)
---let redSocialEjemplo = ([(1,"Pedro"),(2,"Ana"),(3,"Martin")],
---                        [((1,"Pedro"),(2,"Ana")),((2,"Ana"),(3,"Martin"))],
---                        [((1,"Pedro"),"Hola a todos",[(2,"Ana"),(3,"Martin")])])
 
 cadenaDeAmigos :: [Usuario] -> RedSocial -> Bool
 cadenaDeAmigos (u1:u2:us) rs 
@@ -267,3 +243,50 @@ usuariosValidos (x: xs) = usuarioValido x && noHayIdRepetidos (x:xs) && usuarios
 sonDeLaRed :: RedSocial -> [Usuario] -> Bool
 sonDeLaRed _[] = True -- si el usuario esta en la red devuelve True, sino:
 sonDeLaRed red (x:xs) = pertenece x (usuarios red) && sonDeLaRed red xs -- va verificando usuario por usuario sacando el primer elemento x si esta o no en la red, luego hace recursion con el resto de la lista xs
+
+
+---------------------------Maty------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+--Devuelve True <=> existe un elemento e:t en l:[t]
+pertenece :: (Eq t) => t -> [t] -> Bool
+pertenece _ [] = False
+pertenece e (t:l)
+    | e == t = True
+    | otherwise = pertenece e l
+
+-- Devuelve True <=> los elementos de rels:[Relacion] son válidos y todos los usuarios participantes en las relaciones pertenencen a us:[Usuario]
+relacionesValidas :: [Usuario] -> [Relacion] -> Bool
+relacionesValidas us rels = 
+    usuariosDeRelacionValida us rels && 
+    relacionesAsimetricas rels && 
+    noHayRelacionesRepetidas rels
+
+-- Devuelve True <=> para todo elemento (a,b) en rels:[Relacion], a y b pertenecen a us:[Usuario]
+usuariosDeRelacionValida :: [Usuario] -> [Relacion] -> Bool
+usuariosDeRelacionValida _ [] = True
+usuariosDeRelacionValida us ((u1, u2):rels) 
+    | u1 /= u2 && pertenece u1 us && pertenece u2 us = usuariosDeRelacionValida us rels
+    | otherwise = False
+
+-- Devuelve True <=> para todo elemento (a,b) en rels:[Relacion], no existe (b,a)
+relacionesAsimetricas :: [Relacion] -> Bool
+relacionesAsimetricas [] = True
+relacionesAsimetricas ((u1, u2):rels)
+    | pertenece (u2, u1) rels == False = relacionesAsimetricas rels
+    | otherwise = False
+
+-- Devuelve True <=> no hay elementos que se repitan en rels:[Relacion]
+noHayRelacionesRepetidas :: [Relacion] -> Bool
+noHayRelacionesRepetidas [] = True
+noHayRelacionesRepetidas (r:rels)
+    | pertenece r rels == False = noHayRelacionesRepetidas rels
+    | otherwise = False
+
+-- Devuelve True <=> el último elemento de l:[t] es igual a e:t 
+terminaCon :: (Eq t) => t -> [t] -> Bool
+terminaCon _ [] = False
+terminaCon e [t] = e == t
+terminaCon e (t:l) = terminaCon e l
+
+
+
