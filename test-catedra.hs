@@ -1,7 +1,10 @@
 import Test.HUnit
 import Solucion
+import Solucion (obtenerSecuenciaAmigos)
 
 main = runTestTT tests
+
+ejercicio10 = runTestTT tests10
 
 tests = test [
     " nombresDeUsuarios 1" ~: (nombresDeUsuarios redA) ~?= ["Juan","Natalia","Pedro","Mariela"],
@@ -24,6 +27,12 @@ tests = test [
 
     " existeSecuenciaDeAmigos 1" ~: (existeSecuenciaDeAmigos redA usuario1 usuario3) ~?= True
  ]
+
+tests10 = test [
+
+    " existeSecuenciaDeAmigos 1" ~: (existeSecuenciaDeAmigos redA usuario1 usuario3) ~?= True
+    
+    ]
 
 expectAny actual expected = elem actual expected ~? ("expected any of: " ++ show expected ++ "\n but got: " ++ show actual)
 
