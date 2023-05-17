@@ -37,25 +37,51 @@ likesDePublicacion :: Publicacion -> [Usuario]
 likesDePublicacion (_, _, us) = us
 
 -- Ejercicios
+{- nombresDeUsuarios :: RedSocial -> [String]
+nombresDeUsuarios red
+        |redSocialValida red = proyectarNombres(usuarios red)
+        |otherwise = []
 
-nombresDeUsuarios :: RedSocial -> [String]
-nombresDeUsuarios = undefined
 
--- describir qué hace la función: .....
-amigosDe :: RedSocial -> Usuario -> [Usuario]
-amigosDe = undefined
+proyectarNombres :: [Usuario] -> [[Char]]
+proyectarNombres [] = []
+proyectarNombres ((_, nombre):us) = nombre : proyectarNombres us -}
 
--- describir qué hace la función: .....
+{-Devuelve un numero entero que representa la cantidad de usuarios de una red social dada, que cumplan con la condicion de ser Amigos del Usuario especificado -}
 cantidadDeAmigos :: RedSocial -> Usuario -> Int
-cantidadDeAmigos = undefined
+cantidadDeAmigos red usuario= cantidadDeUsuarios ( amigosDe red usuario)
 
--- describir qué hace la función: .....
+--MOVER ESTA FUNCION A LAS AUXILIARES?
+{-Funcion que devuelve la cantidad de Usuarios en un lista de Usuarios -}
+cantidadDeUsuarios :: [Usuario] -> Int
+cantidadDeUsuarios [] = 0
+cantidadDeUsuarios (_:xs) = 1 + cantidadDeUsuarios xs 
+
+{-Retorna el usuario de una red social dada que tenga la mayor cantidad de Amigos -}
 usuarioConMasAmigos :: RedSocial -> Usuario
-usuarioConMasAmigos = undefined
+usuarioConMasAmigos red = compararCantidadDeAmigos (head listaUsuarios) listaUsuarios red
+        where listaUsuarios = usuarios red
 
--- describir qué hace la función: .....
+--MOVER ESTA FUNCION A LAS AUXILIARES?
+{-Evalua, dado el usuario inicial de la lista, la lista de usuarios y la red, cual es el usuario con mas amigos y lo retorna-}
+compararCantidadDeAmigos :: Usuario -> [Usuario] -> RedSocial -> Usuario
+compararCantidadDeAmigos usuarioMayor [] _ = usuarioMayor
+compararCantidadDeAmigos usuarioMayor (usuario:us) red
+    | cantidadDeAmigos red usuario >= cantidadDeAmigos red usuarioMayor = compararCantidadDeAmigos usuario us red
+    | otherwise = compararCantidadDeAmigos usuarioMayor us red
+
+
+{-Evalua que en una red social exista un usuario con mas de un millon de amigos, en cuyo caso retorna True, caso contrario False -}
 estaRobertoCarlos :: RedSocial -> Bool
-estaRobertoCarlos = undefined
+estaRobertoCarlos red = masDeUnMillonDeAmigos (usuarios red) red
+
+--MOVER ESTA FUNCION A LAS AUXILIARES?
+{-Evalua, dada una lista de Usuarios pertenecientes a una red social y dicha red social, si alguno de los usuarios posee mas de un millon de amigos, en cuyo caso retorna True, caso contrario False -}
+masDeUnMillonDeAmigos :: [Usuario] -> RedSocial -> Bool
+masDeUnMillonDeAmigos [] red = False
+masDeUnMillonDeAmigos (x:xs) red
+    |cantidadDeAmigos red x < 1000000 = masDeUnMillonDeAmigos xs red
+    |otherwise = True
 
 -- describir qué hace la función: .....
 publicacionesDe :: RedSocial -> Usuario -> [Publicacion]
