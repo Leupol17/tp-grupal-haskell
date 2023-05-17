@@ -57,16 +57,13 @@ estaRobertoCarlos :: RedSocial -> Bool
 estaRobertoCarlos = undefined
 
 -- describir qué hace la función: .....
-publicacionesDe :: RedSocial-> Usuario -> [Publicacion] 
-publicacionesDe red usuario 
-    | not(redSocialValida red) || not (usuarioValido usuario) || not (pertenece usuario(usuarios red)) = []
-    | otherwise = publicacionesDe' (publicaciones red) usuario
-    where
-        publicacionesDe' [] _ = []
-        publicacionesDe' (p:ps) u 
-            |usuarioDePublicacion p == u = p : publicacionesDe' ps u --si la publicacion evaluada es del usuario buscado agrega la publicacion a la lista y continua con el resto de publicaciones
-            |otherwise = publicacionesDe' ps u --si el usuario de la publicacion actual no coincide con el usuario buscado, continua con el resto de las publicaciones sin llamar nada
-
+publicacionesDe :: RedSocial -> Usuario -> [Publicacion]
+publicacionesDe red usuario = publicacionesDe' (publicaciones red) usuario
+  where
+    publicacionesDe' [] _ = []
+    publicacionesDe' (p:ps) u
+      | usuarioDePublicacion p == u && not (pertenece p ps) = p : publicacionesDe' ps u
+      | otherwise = publicacionesDe' ps u
 
 -- describir qué hace la función: .....
 publicacionesQueLeGustanA :: RedSocial -> Usuario -> [Publicacion]
@@ -78,21 +75,21 @@ lesGustanLasMismasPublicaciones = undefined
 
 -- describir qué hace la función: .....
 tieneUnSeguidorFiel :: RedSocial -> Usuario -> Bool
-tieneUnSeguidorFiel red usuario
-    | not (redSocialValida red) || not (usuarioValido usuario) || not (pertenece usuario (usuarios red)) = False
-    | otherwise = tieneUnSeguidorFiel' (usuarios red) (publicacionesDe red usuario)
-    where
-        --necesitamos verificar si la lista de de usuarios de la red social tiene un seguidor fiel 
-        tieneUnSeguidorFiel' [] _ = False
-        tieneUnSeguidorFiel' (u:us) ps
-            | esSeguidorFiel u ps = True
-            | otherwise = tieneUnSeguidorFiel' us ps
-        --verificamos que el usuario ha dado like a todas las publicaciones de la lista (p:ps)
-        esSeguidorFiel :: Usuario -> [Publicacion] -> Bool
-        esSeguidorFiel _ [] = True
-        esSeguidorFiel u (p:ps)
-            | pertenece u (likesDePublicacion p) = esSeguidorFiel u ps
-            | otherwise = False
+tieneUnSeguidorFiel red usuario = tieneUnSeguidorFiel' (usuarios red) (publicacionesDe red usuario)
+  where
+    tieneUnSeguidorFiel' [] _ = False
+    tieneUnSeguidorFiel' (u:us) ps
+      | esSeguidorFiel u ps = True
+      | otherwise = tieneUnSeguidorFiel' us ps
+
+    esSeguidorFiel :: Usuario -> [Publicacion] -> Bool
+    esSeguidorFiel _ [] = True
+    esSeguidorFiel u (p:ps)
+      | not (pertenece u (likesDePublicacion p)) = False
+      | otherwise = esSeguidorFiel u ps
+
+
+
 
 -- describir qué hace la función: .....
 existeSecuenciaDeAmigos :: RedSocial -> Usuario -> Usuario -> Bool

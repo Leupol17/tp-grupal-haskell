@@ -79,3 +79,40 @@ redSocial2 = ([usuario1, usuario2], [relacion1_2, relacion2_1], [publicacion1_2_
 redSocial3 = ([usuario1], [], [])
 redSocial4 = ([usuario1], [], [publicacion1_0_1])
 redSocial5 = ([usuario1], [], [publicacion1_0_1,publicacion1_0_2,publicacion1_0_3])
+
+
+
+
+
+
+-- Definición de usuarios, relaciones y publicaciones de ejemplo
+usuariosEjemplo :: [Usuario]
+usuariosEjemplo = [(1, "usuario1"), (2, "usuario2"), (3, "usuario3"), (4, "usuario4")]
+
+relacionesEjemplo :: [Relacion]
+relacionesEjemplo = [((1, "usuario1"), (2, "usuario2")), ((2, "usuario2"), (3, "usuario3")), ((3, "usuario3"), (1, "usuario1"))]
+
+publicacionesEjemplo :: [Publicacion]
+publicacionesEjemplo = [((1, "usuario1"), "Publicación 1", [(2, "usuario2"), (3, "usuario3")])
+                       , ((2, "usuario2"), "Publicación 2", [(1, "usuario1"), (3, "usuario3")])
+                       , ((3, "usuario3"), "Publicación 3", [(1, "usuario1"), (2, "usuario2")])
+                       , ((4, "usuario4"), "Publicación 4", [])
+                       ]
+
+redSocialEjemplo :: RedSocial
+redSocialEjemplo = (usuariosEjemplo, relacionesEjemplo, publicacionesEjemplo)
+
+-- Prueba de la función tieneUnSeguidorFiel
+ejemploSeguidorFiel :: Bool
+ejemploSeguidorFiel = tieneUnSeguidorFiel redSocialEjemplo (1, "usuario1")
+-- Valor esperado: True, ya que el usuario (1, "usuario1") tiene al menos un seguidor fiel
+
+-- Prueba de la función tieneUnSeguidorFiel con otro usuario
+ejemploSeguidorFiel2 :: Bool
+ejemploSeguidorFiel2 = tieneUnSeguidorFiel redSocialEjemplo (2, "usuario2")
+-- Valor esperado: True, ya que el usuario (2, "usuario2") tiene al menos un seguidor fiel
+
+-- Prueba de la función tieneUnSeguidorFiel con un usuario sin seguidores fieles
+ejemploSeguidorFiel3 :: Bool
+ejemploSeguidorFiel3 = tieneUnSeguidorFiel redSocialEjemplo (4, "usuario4")
+-- Valor esperado: False, ya que el usuario (4, "usuario4") no tiene seguidores fieles
