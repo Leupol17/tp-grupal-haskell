@@ -38,14 +38,26 @@ likesDePublicacion (_, _, us) = us
 -- Ejercicios
 --[EJERCICIO 1]
 -- funcion auxiliar para nombresDeUsuarios. Que funciona tomando a los nombres de los usuarios y los coloca en una lista de strings
+-- caso base, si no hay nombres devuelve la lista vacia 
+ --ignora el primer elem de los usuarios que serian los id y me quedo solo con los nombres, a ellos los agrego a una lista recursivamente
 proyectarNombres :: [Usuarios] -> [String]
-proyectarNombres []=[] -- caso base, si no hay nombres devuelve la lista vacia 
-proyectarNombres (( _ , nombres): restoDeUsuarios) = nombres : proyectarNombres restoDeUsuarios --ignora el primer elem de los usuarios que serian los id y me quedo solo con los nombres, a ellos los agrego a una lista recursivamente
--- toma redSocial  y devuelve una lista de strings 
+proyectarNombres []=[] 
+proyectarNombres (( _ , nombres): restoDeUsuarios) = nombres : proyectarNombres restoDeUsuarios
+-- toma redSocial  y devuelve una lista de strings
+-- red representa una instancia de redSocial y al llamar a proyectarNombres obtiene los nombres de la lista correspondientes a esa redsocial 
 nombresDeUsuarios :: RedSocial -> [String]
-nombresDeUsuarios red = proyectarNombres (usuarios red) -- red representa una instancia de redSocial y al llamar a proyectarNombres obtiene los nombres de la lista correspondientes a esa redsocial
+nombresDeUsuarios red = proyectarNombres (usuarios red) 
 
 --[EJERCICIO 2]
+{- funcion auxiliar que toma un usuario y una lista de relaciones en donde recorre la lista y en cada relacion comprueba si el usuario actual es 
+uno de los dos usuarios en la relacion.Si se cumple, el otro usuario se añade a la lista de amigos. Devuelve una lista con todos los usuarios 
+que estan relacionados con el actual-}
+amigos ::Usuario -> [Relacion] -> [Usuario]
+amigos usuarioActual []= []
+amigos usuarioActual ((relacion1, relacion2): rs)
+    | relacion1 == usuarioActual = relacion2 : amigos usuarioActual rs
+    |relacion2 == usuarioActual = relacion1 : amigos usuarioActual rs
+    |otherwise = amigos usuarioActual rs
 
 ----funcio auxiliar para amigosDe
 --agregarAmigos :: Usuario -> [Relacion] -> [Usuario]
@@ -228,7 +240,9 @@ cadenaDeAmigos (u1:u2:us) rs
     |otherwise = False
 cadenaDeAmigos _ _ = True   
 
-
+redSocialValida :: RedSocial -> Bool
+redSocialValida ( usuarios, relaciones, publicaciones) =
+    usuariosValidos usuarios && relacionesValidas usuarios relaciones && publicacionesValidas usuarios publicaciones
 ---------------------------Agus------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 --esta funcion toma como entrada Usuario y se asegura que su resultado:hace recursion continua hasta que se agoten los usuarios de la lista. 
