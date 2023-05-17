@@ -63,11 +63,15 @@ publicacionesDe = undefined
 
 -- describir qué hace la función: .....
 publicacionesQueLeGustanA :: RedSocial -> Usuario -> [Publicacion]
-publicacionesQueLeGustanA = undefined
+publicacionesQueLeGustanA (_,_,[]) _ = []
+publicacionesQueLeGustanA (users,rels,(p:pubs)) u
+    | pertenece u (likesDePublicacion p) = p : publicacionesQueLeGustanA (users,rels,pubs) u
+    | otherwise = publicacionesQueLeGustanA (users,rels,pubs) u
 
 -- describir qué hace la función: .....
 lesGustanLasMismasPublicaciones :: RedSocial -> Usuario -> Usuario -> Bool
-lesGustanLasMismasPublicaciones = undefined
+lesGustanLasMismasPublicaciones red u1 u2 =
+    mismosElementos (publicacionesQueLeGustanA red u1) (publicacionesQueLeGustanA red u2)
 
 -- describir qué hace la función: .....
 tieneUnSeguidorFiel :: RedSocial -> Usuario -> Bool
