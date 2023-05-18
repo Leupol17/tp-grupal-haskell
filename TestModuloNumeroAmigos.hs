@@ -25,8 +25,10 @@ testsuiteUsuarioConMasAmigos = test [
     ]
 testsuiteEstaRobertoCarlos = test [
     "estaRobertoCarlos 1: menos de 10 (ex un millon) amigos " ~: (estaRobertoCarlos redConMenosDe10Amigos) ~?= False,
+
     "estaRobertoCarlos 2: igual a 10 (ex un millon) amigos " ~: (estaRobertoCarlos redCon10Amigos) ~?= False,
-    "estaRobertoCarlos 3: mayor a 10 (ex un millon) amigos " ~: (cantidadDeAmigos redConMasDe10Amigos usuario1) ~?= 0
+
+    "estaRobertoCarlos 3: mayor a 10 (ex un millon) amigos " ~: (estaRobertoCarlos redConMasDe10Amigos) ~?= True
     ]
 
 usuario1 = (1, "Juan")
@@ -46,6 +48,7 @@ usuario12 = (12, "Melina")
 
 usuariosA = [usuario1, usuario2, usuario3, usuario5]
 usuariosB = [usuario1, usuario2, usuario3, usuario4]
+todosLosUsuarios = [usuario1,usuario2,usuario3,usuario4,usuario5,usuario6,usuario7,usuario8,usuario9,usuario10,usuario11,usuario12]
 
 relacion1_2 = (usuario1, usuario2)
 relacion1_3 = (usuario1, usuario3)
@@ -65,11 +68,12 @@ relacionAmigosConMasDe10 = [relacion1_2,relacion1_3,relacion1_4,relacion1_5,rela
 
 redSinUsuario4 = (usuariosA,[relacion1_2,relacion1_3], [] )
 redSinUsuarios = ([], [], [])
+
 redConUnUsuario = ([usuario1],[relacion1_2,relacion1_3], [] )
 redConDosUsuarioMismosAmigos = ([usuario1, usuario2, usuario3, usuario4],[relacion1_2,relacion1_3, relacion2_3], [] )
 redNormalSinPublicaciones = ([usuario1, usuario2, usuario3, usuario4],[relacion1_2,relacion1_3, relacion2_3,relacion1_4], [] )
-redConMenosDe10Amigos = ([usuario1, usuario2, usuario3, usuario4],[relacion1_2,relacion1_3, relacion2_3,relacion1_4], [] )
-redCon10Amigos = ([usuario1, usuario2, usuario3, usuario4],relacionAmigosCon10, [] )
-redConMasDe10Amigos = ([usuario1, usuario2, usuario3, usuario4],[relacion1_2,relacion1_3,relacion1_4,relacion1_5,relacion1_6,relacion1_7,relacion1_8,relacion1_9,relacion1_10,relacion1_11, relacion1_12], [] )
+redConMenosDe10Amigos = (todosLosUsuarios,[relacion1_2,relacion1_3, relacion2_3,relacion1_4], [] )
+redCon10Amigos = (todosLosUsuarios,relacionAmigosCon10, [] )
+redConMasDe10Amigos = (todosLosUsuarios,relacionAmigosConMasDe10, [] )
 
 

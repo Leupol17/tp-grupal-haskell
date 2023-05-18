@@ -68,7 +68,8 @@ amigosDe redSocial usuario
     | not(redSocialValida redSocial) || not(usuarioValido usuario) || not(pertenece usuario(usuarios redSocial)) =[]
     | otherwise = amigosDelUsuario (relacion redSocial) usuario []
           
--- describir qué hace la función: .....
+--[EJERCICIO 3]
+{-Dada una red social y un usuario retorna la cantidad de amigos de ese usuario en dicha red social -}          
 cantidadDeAmigos :: RedSocial -> Usuario -> Int
 cantidadDeAmigos red usuario= cantidadDeUsuarios ( amigosDe red usuario)
 
