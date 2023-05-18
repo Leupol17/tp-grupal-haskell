@@ -13,7 +13,7 @@ nombresDeUsuariosPrueba = test [
 proyectarNombresPrueba = test [
   "lista vacia" ~: (proyectarNombres []) ~?= [],
   "lista con usuariosA" ~: (proyectarNombres usuariosA []) ~?= ["Juan","Natalia","Pedro","Mariela"],
-  "lista con usuariosB" ~: (proyectarNombres usuariosA []) ~?= ["Juan","Natalia","Pedro"],
+  "lista con usuariosB" ~: (proyectarNombres usuariosB []) ~?= ["Juan","Natalia","Pedro"],
 
 
 ]
