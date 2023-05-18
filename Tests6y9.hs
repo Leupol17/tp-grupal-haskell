@@ -102,4 +102,3 @@ redSocial4 = ([usuario1], [], [publicacion1_0_1])
 redSocial5 = ([usuario1], [], [publicacion1_0_1,publicacion1_0_2,publicacion1_0_3])
 redSocial6 = ([usuario1,usuario2,usuario3], [relacion1_2,relacion1_3,relacion2_3], [publicacion3_4,publicacion1_5,publicacion2_2])
 redSocial7 = ([usuario1,usuario2,usuario3], [relacion1_2,relacion1_3,relacion2_3], [publicacion3_4,publicacion3_3,publicacion1_5,publicacion1_4,publicacion2_2,publicacion2_1])
-redSocial8 = 
