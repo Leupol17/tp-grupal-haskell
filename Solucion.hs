@@ -38,33 +38,29 @@ likesDePublicacion (_, _, us) = us
 
 -- Ejercicios
 --[EJERCICIO 1]
-{- funcion auxiliar para nombresDeUsuarios. Que funciona verificando que primero no esten repetidos las entadas en la lista y luego, toma a los nombres de los usuarios y
- los coloca en una lista de strings caso base, si no hay nombres devuelve la lista vacia.
-ignora el primer elem de los usuarios que serian los id y me quedo solo con los nombres, a ellos los agrego a una lista recursivamente-}
-proyectarNombres :: [Usuarios] -> [String]
+{- funcion auxiliar para nombresDeUsuarios. recorre los usuarios y acumula los nombres que no esten ya la lista proyectados-}
+proyectarNombres :: [Usuarios] -> [String] ->[String]
 proyectarNombres []=[] 
-proyectarNombres (( _ , nombres): restoDeUsuarios) 
-    | not(pertenece nombres restoDeUsuarios) = nombres : proyectarNombres restoDeUsuarios
-    | otherwise = proyectarNombres restoDeUsuarios
--- toma redSocial  y devuelve una lista de strings
--- red representa una instancia de redSocial y al llamar a proyectarNombres obtiene los nombres de la lista correspondientes a esa redsocial 
+proyectarNombres (( _ , nombres): restoDeUsuarios) yaProyectados
+    | not(pertenece nombres yaProyectados) = nombres : proyectarNombres restoDeUsuarios (nombre: yaProyectados)
+    | otherwise = proyectarNombres restoDeUsuarios yaProyectados
+{-dada una redsocial, extrae todos los nombres sin repetir en una lista de string-}
 nombresDeUsuarios :: RedSocial -> [String]
 nombresDeUsuarios red = proyectarNombres (usuarios red) 
 
 --[EJERCICIO 2]
-{- funcion auxiliar que toma un usuario y una lista de relaciones en donde recorre la lista y en cada relacion comprueba si el usuario actual es 
-uno de los dos usuarios en la relacion(primero debe verificar que no sean usuarios repetidos ya en la lista).Si se cumple, el otro usuario se añade a la lista de amigos.
- Devuelve una lista con todos los usuarios que estan relacionados con el actual-}
-amigosDelUsuario ::Usuario -> [Relacion] -> [Usuario]
+{- funcion auxiliar que por recursividad busca los amigos del usuario en la lista de relaciones.Toma relacion, usuario y uana lista de amigos del usuario en cuestion.
+Comprueba cada relacion de la lista y si el usuario que tomamos cumple estar en una relacion y el segundo no esta en la lista de amistad, entonces el contrario se añade 
+a la lista de amigos. Si el primero de los usuarios no esta en la relacion, entonces se omite. -}
+amigosDelUsuario ::[Relacion] -> Usuario -> [Usuario] ->[Usuario]
 amigosDelUsuario [] _ amigos = amigos
 amigosDelUsuario ((relacion1, relacion2): rs) usuario amigos
     | relacion1 == usuario && not(pertenece relacion2 amigos) = amigosDelUsuario rs usuario (relacion2 : amigos)
     |relacion2 == usuario && not(pertenece relacion1 amigos) = amigosDelUsuario rs usuario (relacion1 : amigos)
     |otherwise = amigosDelUsuario rs usuario amigos
 
-{-si no son validos;red social valida, usuario valido y usuario que pertenece a la red social; devolvera una lista vacia. si todas se cumplen,
- llama la funcion amigos con el usuario actual y la lista de relaciones dentro de la red social para posicionar los amigos encontrados.
- Devuelve la lita de amigos del usuario en la red social -}
+{-Toma redSocial y usuario, comprueba si la red y el usuario son validos; y si dicho usuario es de la red. si ninguna de las condiciones se cumple devuelve una lista vacia
+si todas se cumplen llama a la funcion aux con las relaciones de la red, el usuario y una lista vacia de amigos.Finalmente devuelve la lsita de los amigos del usuario  -}
 amigosDe :: RedSocial -> Usuario -> [Usuario]
 amigosDe redSocial usuario
     | not(redSocialValida redSocial) || not(usuarioValido usuario) || not(pertenece usuario(usuarios redSocial)) =[]
