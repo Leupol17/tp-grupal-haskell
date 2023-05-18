@@ -38,17 +38,21 @@ likesDePublicacion (_, _, us) = us
 
 -- Ejercicios
 
-{-Devuelve un numero entero que representa la cantidad de usuarios de una red social dada, que cumplan con la condicion de ser Amigos del Usuario especificado -}
 --[EJERCICIO 1]
-{- funcion auxiliar para nombresDeUsuarios. recorre los usuarios y acumula los nombres que no esten ya la lista proyectados-}
-proyectarNombres :: [Usuarios] -> [String] ->[String]
-proyectarNombres []=[] 
-proyectarNombres (( _ , nombres): restoDeUsuarios) yaProyectados
-    | not(pertenece nombres yaProyectados) = nombres : proyectarNombres restoDeUsuarios (nombre: yaProyectados)
-    | otherwise = proyectarNombres restoDeUsuarios yaProyectados
-{-dada una redsocial, extrae todos los nombres sin repetir en una lista de string-}
+{-Devuelve un numero entero que representa la cantidad de usuarios de una red social dada, que cumplan con la condicion de ser Amigos del Usuario especificado -}
 nombresDeUsuarios :: RedSocial -> [String]
-nombresDeUsuarios red = proyectarNombres (usuarios red) 
+nombresDeUsuarios red = proyectarNombres red
+
+{-dada una redsocial, extrae todos los nombres sin repetir en una lista de string-}
+proyectarNombres :: RedSocial -> [String]
+proyectarNombres red = obtenerProyectarNombres (usuarios red) []
+
+{- funcion auxiliar para nombresDeUsuarios. recorre los usuarios y acumula los nombres que no esten ya la lista proyectados-}
+obtenerProyectarNombres :: [Usuario] -> [String] ->[String]
+obtenerProyectarNombres [] _ =[] 
+obtenerProyectarNombres (( _ , nombre): restoDeUsuarios) yaProyectados
+    | pertenece nombre yaProyectados = obtenerProyectarNombres restoDeUsuarios  yaProyectados
+    | otherwise = nombre : obtenerProyectarNombres restoDeUsuarios (nombre:yaProyectados)  
 
 --[EJERCICIO 2]
 {- funcion auxiliar que por recursividad busca los amigos del usuario en la lista de relaciones.Toma relacion, usuario y uana lista de amigos del usuario en cuestion.
@@ -66,7 +70,7 @@ si todas se cumplen llama a la funcion aux con las relaciones de la red, el usua
 amigosDe :: RedSocial -> Usuario -> [Usuario]
 amigosDe redSocial usuario
     | not(redSocialValida redSocial) || not(usuarioValido usuario) || not(pertenece usuario(usuarios redSocial)) =[]
-    | otherwise = amigosDelUsuario (relacion redSocial) usuario []
+    | otherwise = amigosDelUsuario (relaciones redSocial) usuario []
           
 --[EJERCICIO 3]
 {-Dada una red social y un usuario retorna la cantidad de amigos de ese usuario en dicha red social -}          
@@ -128,8 +132,8 @@ existeSecuenciaDeAmigos :: RedSocial -> Usuario -> Usuario -> Bool
 existeSecuenciaDeAmigos red u1 u2 = esSecuenciaAmigos secuencia red
   where
     secuencia = obtenerSecuenciaAmigos red u1 u2
-----------Ejercicio 10----------
 
+--[EJERCICIO 10]
 -- Devuelve una lista en la que el primer elemento es u1, el último es u2, y todos los que hay entre ellos son la secuencia obtenida por obtenerAmigosEnComun
 obtenerSecuenciaAmigos :: RedSocial -> Usuario -> Usuario -> [Usuario]
 obtenerSecuenciaAmigos red u1 u2 = u1 : amigosEnComun ++ [u2]
@@ -149,7 +153,6 @@ esSecuenciaAmigos [] _ = True
 esSecuenciaAmigos [_] _ = True
 esSecuenciaAmigos (u1:u2:us) red = relacionadosDirecto u1 u2 red && esSecuenciaAmigos (u2:us) red
 
-------------------------------------------Leo------------------------------------------
 
 {- Evalua, dada una lista de Usuarios y una lista de Publicaciones, las funciones: 
 usuariosDePublicacionSonUsuariosDeRed, usuariosDeLikeDePublicacionSonUsuariosDeRed, noHayPublicacionesRepetidas
@@ -198,7 +201,6 @@ empiezaCon t xs
     |head xs == t = True
     |otherwise = False
 
------------------------------------------------------Sebastian----------------------------------------------------------------
 
 mismosElementos :: Eq a => [a] -> [a] -> Bool
 mismosElementos [] []= True
@@ -238,8 +240,7 @@ cadenaDeAmigos _ _ = True
 
 redSocialValida :: RedSocial -> Bool
 redSocialValida ( usuarios, relaciones, publicaciones) =
-    usuariosValidos usuarios && relacionesValidas usuarios relaciones && publicacionesValidas usuarios publicaciones
----------------------------Agus------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    usuariosValidos usuarios && relacionesValidas usuarios relaciones && publicacionesValidas usuarios publicaciones
 
 --esta funcion toma como entrada Usuario y se asegura que su resultado:hace recursion continua hasta que se agoten los usuarios de la lista. 
 --Si se encuentra con repetidos devolvera False. Si todos los ids son distintos devuelve True
@@ -271,8 +272,6 @@ sonDeLaRed :: RedSocial -> [Usuario] -> Bool
 sonDeLaRed _[] = True -- si el usuario esta en la red devuelve True, sino:
 sonDeLaRed red (x:xs) = pertenece x (usuarios red) && sonDeLaRed red xs -- va verificando usuario por usuario sacando el primer elemento x si esta o no en la red, luego hace recursion con el resto de la lista xs
 
-
----------------------------Maty------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 --Devuelve True <=> existe un elemento e:t en l:[t]
 pertenece :: (Eq t) => t -> [t] -> Bool

@@ -23,6 +23,7 @@ testsuiteUsuarioConMasAmigos = test [
 
     " usuarioConMasAmigos 3: Red con usuarios" ~: (usuarioConMasAmigos redNormalSinPublicaciones ) ~?= usuario1
     ]
+
 testsuiteEstaRobertoCarlos = test [
     "estaRobertoCarlos 1: menos de 10 (ex un millon) amigos " ~: (estaRobertoCarlos redConMenosDe10Amigos) ~?= False,
 
@@ -46,7 +47,7 @@ usuario12 = (12, "Melina")
 
 
 
-usuariosA = [usuario1, usuario2, usuario3, usuario5]
+usuariosA = [usuario1, usuario2, usuario3,usuario4, usuario5]
 usuariosB = [usuario1, usuario2, usuario3, usuario4]
 todosLosUsuarios = [usuario1,usuario2,usuario3,usuario4,usuario5,usuario6,usuario7,usuario8,usuario9,usuario10,usuario11,usuario12]
 
