@@ -52,6 +52,7 @@ relacion2_4 = (usuario2, usuario4)
 relacion3_4 = (usuario4, usuario3)
 relacion4_2 = (usuario4, usuario2)
 relacion4_5 = (usuario4, usuario5)
+relacion2_1 = (usuario2,usuario1)
 
 
 

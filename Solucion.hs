@@ -105,7 +105,12 @@ masDeUnMillonDeAmigos (x:xs) red
 
 -- describir qué hace la función: .....
 publicacionesDe :: RedSocial -> Usuario -> [Publicacion]
-publicacionesDe = undefined
+publicacionesDe red usuario = publicacionesDe' (publicaciones red) usuario
+  where
+    publicacionesDe' [] _ = []
+    publicacionesDe' (p:ps) u
+      | usuarioDePublicacion p == u && not (pertenece p ps) = p : publicacionesDe' ps u
+      | otherwise = publicacionesDe' ps u
 
 -- describir qué hace la función: Devuelve el resultado de la función obtenerPublicacionesQueLeGustanA, se pasa una lista vacía que sirve para mantener referencia de res
 publicacionesQueLeGustanA :: RedSocial -> Usuario -> [Publicacion]
@@ -126,7 +131,21 @@ lesGustanLasMismasPublicaciones red u1 u2 =
 
 -- describir qué hace la función: .....
 tieneUnSeguidorFiel :: RedSocial -> Usuario -> Bool
-tieneUnSeguidorFiel = undefined
+tieneUnSeguidorFiel red usuario = tieneUnSeguidorFiel' (usuarios red) (publicacionesDe red usuario)
+  where
+    tieneUnSeguidorFiel' [] _ = False
+    tieneUnSeguidorFiel' (u:us) ps
+      | esSeguidorFiel u ps = True
+      | otherwise = tieneUnSeguidorFiel' us ps
+
+    esSeguidorFiel :: Usuario -> [Publicacion] -> Bool
+    esSeguidorFiel _ [] = True
+    esSeguidorFiel u (p:ps)
+      | not (pertenece u (likesDePublicacion p)) = False
+      | otherwise = esSeguidorFiel u ps
+
+
+
 
 -- describir qué hace la función: .....
 existeSecuenciaDeAmigos :: RedSocial -> Usuario -> Usuario -> Bool
@@ -319,6 +338,5 @@ terminaCon :: (Eq t) => t -> [t] -> Bool
 terminaCon _ [] = False
 terminaCon e [t] = e == t
 terminaCon e (t:l) = terminaCon e l
-
 
 

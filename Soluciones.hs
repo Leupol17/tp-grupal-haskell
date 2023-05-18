@@ -1,6 +1,104 @@
-module FuncionesAuxiliares where
 
-import FuncionesBase
+-- Completar con los datos del grupo
+--
+-- Nombre de Grupo: xx
+-- Integrante 1: Nombre Apellido, email, LU
+-- Integrante 2: Nombre Apellido, email, LU
+-- Integrante 3: Nombre Apellido, email, LU
+-- Integrante 4: Nombre Apellido, email, LU
+
+type Usuario = (Integer, String) -- (id, nombre)
+type Relacion = (Usuario, Usuario) -- usuarios que se relacionan
+type Publicacion = (Usuario, String, [Usuario]) -- (usuario que publica, texto publicacion, likes)
+type RedSocial = ([Usuario], [Relacion], [Publicacion])
+
+-- Funciones basicas
+
+usuarios :: RedSocial -> [Usuario]
+usuarios (us, _, _) = us
+
+relaciones :: RedSocial -> [Relacion]
+relaciones (_, rs, _) = rs
+
+publicaciones :: RedSocial -> [Publicacion]
+publicaciones (_, _, ps) = ps
+
+idDeUsuario :: Usuario -> Integer
+idDeUsuario (id, _) = id 
+
+nombreDeUsuario :: Usuario -> String
+nombreDeUsuario (_, nombre) = nombre 
+
+usuarioDePublicacion :: Publicacion -> Usuario
+usuarioDePublicacion (u, _, _) = u
+
+likesDePublicacion :: Publicacion -> [Usuario]
+likesDePublicacion (_, _, us) = us
+
+-- Ejercicios
+
+nombresDeUsuarios :: RedSocial -> [String]
+nombresDeUsuarios = undefined
+
+-- describir qué hace la función: .....
+amigosDe :: RedSocial -> Usuario -> [Usuario]
+amigosDe = undefined
+
+-- describir qué hace la función: .....
+cantidadDeAmigos :: RedSocial -> Usuario -> Int
+cantidadDeAmigos = undefined
+
+-- describir qué hace la función: .....
+usuarioConMasAmigos :: RedSocial -> Usuario
+usuarioConMasAmigos = undefined
+
+-- describir qué hace la función: .....
+estaRobertoCarlos :: RedSocial -> Bool
+estaRobertoCarlos = undefined
+
+-- describir qué hace la función: .....
+publicacionesDe :: RedSocial-> Usuario -> [Publicacion] 
+publicacionesDe red usuario 
+    | not(redSocialValida red) || not (usuarioValido usuario) || not (pertenece usuario(usuarios red)) = []
+    | otherwise = publicacionesDe' (publicaciones red) usuario
+    where
+        publicacionesDe' [] _ = []
+        publicacionesDe' (p:ps) u 
+            |usuarioDePublicacion p == u = p : publicacionesDe' ps u --si la publicacion evaluada es del usuario buscado agrega la publicacion a la lista y continua con el resto de publicaciones
+            |otherwise = publicacionesDe' ps u --si el usuario de la publicacion actual no coincide con el usuario buscado, continua con el resto de las publicaciones sin llamar nada
+
+
+-- describir qué hace la función: .....
+publicacionesQueLeGustanA :: RedSocial -> Usuario -> [Publicacion]
+publicacionesQueLeGustanA = undefined
+
+-- describir qué hace la función: .....
+lesGustanLasMismasPublicaciones :: RedSocial -> Usuario -> Usuario -> Bool
+lesGustanLasMismasPublicaciones = undefined
+--[Ejercicio 9]
+
+-- describir qué hace la función: .....
+tieneUnSeguidorFiel :: RedSocial -> Usuario -> Bool
+tieneUnSeguidorFiel red usuario
+    | not (redSocialValida red) || not (usuarioValido usuario) || not (pertenece usuario (usuarios red)) = False
+    | otherwise = tieneUnSeguidorFiel' (usuarios red) (publicacionesDe red usuario)
+    where
+        tieneUnSeguidorFiel' [] _ = False
+        tieneUnSeguidorFiel' (u:us) ps
+            | esSeguidorFiel u ps = True
+            | otherwise = tieneUnSeguidorFiel' us ps
+
+        esSeguidorFiel :: Usuario -> [Publicacion] -> Bool
+        esSeguidorFiel _ [] = True
+        esSeguidorFiel u (p:ps)
+            | pertenece u (likesDePublicacion p) = esSeguidorFiel u ps
+            | otherwise = False
+
+-- describir qué hace la función: .....
+existeSecuenciaDeAmigos :: RedSocial -> Usuario -> Usuario -> Bool
+existeSecuenciaDeAmigos = undefined
+
+
 
 -- Funciones auxiliares
 
@@ -127,7 +225,6 @@ sinRepetidos (x:xs) = not(estaRepetido x xs) && sinRepetidos xs
 relacionadosDirecto :: Usuario -> Usuario -> RedSocial -> Bool
 relacionadosDirecto u1 u2 rs = pertenece (u1,u2) (relaciones rs) || pertenece (u2, u1) (relaciones rs)
 
-
 cadenaDeAmigos :: [Usuario] -> RedSocial -> Bool
 cadenaDeAmigos (u1:u2:us) rs 
     |relacionadosDirecto u1 u2 rs = cadenaDeAmigos (u2:us) rs 
@@ -138,11 +235,6 @@ redSocialValida :: RedSocial -> Bool
 redSocialValida ( usuarios, relaciones, publicaciones) =
     usuariosValidos usuarios && relacionesValidas usuarios relaciones && publicacionesValidas usuarios publicaciones
     
-
-
-
-
-
 ---------------------------Agus------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 --esta funcion toma como entrada Usuario y se asegura que su resultado:hace recursion continua hasta que se agoten los usuarios de la lista. 
@@ -174,4 +266,3 @@ usuariosValidos (x: xs) = usuarioValido x && noHayIdRepetidos (x:xs) && usuarios
 sonDeLaRed :: RedSocial -> [Usuario] -> Bool
 sonDeLaRed _[] = True -- si el usuario esta en la red devuelve True, sino:
 sonDeLaRed red (x:xs) = pertenece x (usuarios red) && sonDeLaRed red xs -- va verificando usuario por usuario sacando el primer elemento x si esta o no en la red, luego hace recursion con el resto de la lista xs
-
