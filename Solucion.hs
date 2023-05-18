@@ -48,6 +48,38 @@ proyectarNombres [] = []
 proyectarNombres ((_, nombre):us) = nombre : proyectarNombres us -}
 
 {-Devuelve un numero entero que representa la cantidad de usuarios de una red social dada, que cumplan con la condicion de ser Amigos del Usuario especificado -}
+--[EJERCICIO 1]
+-- funcion auxiliar para nombresDeUsuarios. Que funciona tomando a los nombres de los usuarios y los coloca en una lista de strings
+-- caso base, si no hay nombres devuelve la lista vacia 
+ --ignora el primer elem de los usuarios que serian los id y me quedo solo con los nombres, a ellos los agrego a una lista recursivamente
+proyectarNombres :: [Usuario] -> [String]
+proyectarNombres []=[] 
+proyectarNombres (( _ , nombres): restoDeUsuarios) = nombres : proyectarNombres restoDeUsuarios
+-- toma redSocial  y devuelve una lista de strings
+-- red representa una instancia de redSocial y al llamar a proyectarNombres obtiene los nombres de la lista correspondientes a esa redsocial 
+nombresDeUsuarios :: RedSocial -> [String]
+nombresDeUsuarios red = proyectarNombres (usuarios red) 
+
+--[EJERCICIO 2]
+{- funcion auxiliar que toma un usuario y una lista de relaciones en donde recorre la lista y en cada relacion comprueba si el usuario actual es 
+uno de los dos usuarios en la relacion.Si se cumple, el otro usuario se añade a la lista de amigos. Devuelve una lista con todos los usuarios 
+que estan relacionados con el actual-}
+amigos ::Usuario -> [Relacion] -> [Usuario]
+amigos usuarioActual []= []
+amigos usuarioActual ((relacion1, relacion2): rs)
+    | relacion1 == usuarioActual = relacion2 : amigos usuarioActual rs
+    |relacion2 == usuarioActual = relacion1 : amigos usuarioActual rs
+    |otherwise = amigos usuarioActual rs
+
+{-si no son validos;red social valida, usuario valido y usuario que pertenece a la red social; devolvera una lista vacia. si todas se cumplen,
+ llama la funcion amigos con el usuario actual y la lista de relaciones dentro de la red social para posicionar los amigos encontrados.
+ Devuelve la lita de amigos del usuario en la red social -}
+amigosDe :: RedSocial -> Usuario -> [Usuario]
+amigosDe redSocial usuario
+    | not(redSocialValida redSocial) || not(usuarioValido usuario) || not(pertenece usuario(usuarios redSocial)) =[]
+    | otherwise = amigos usuario(relaciones redSocial)
+
+{-Dada una red social y un usuario retorna la cantidad de amigos de ese usuario en dicha red social -}          
 cantidadDeAmigos :: RedSocial -> Usuario -> Int
 cantidadDeAmigos red usuario= cantidadDeUsuarios ( amigosDe red usuario)
 
@@ -89,11 +121,15 @@ publicacionesDe = undefined
 
 -- describir qué hace la función: .....
 publicacionesQueLeGustanA :: RedSocial -> Usuario -> [Publicacion]
-publicacionesQueLeGustanA = undefined
+publicacionesQueLeGustanA (_,_,[]) _ = []
+publicacionesQueLeGustanA (users,rels,(p:pubs)) u
+    | pertenece u (likesDePublicacion p) = p : publicacionesQueLeGustanA (users,rels,pubs) u
+    | otherwise = publicacionesQueLeGustanA (users,rels,pubs) u
 
 -- describir qué hace la función: .....
 lesGustanLasMismasPublicaciones :: RedSocial -> Usuario -> Usuario -> Bool
-lesGustanLasMismasPublicaciones = undefined
+lesGustanLasMismasPublicaciones red u1 u2 =
+    mismosElementos (publicacionesQueLeGustanA red u1) (publicacionesQueLeGustanA red u2)
 
 -- describir qué hace la función: .....
 tieneUnSeguidorFiel :: RedSocial -> Usuario -> Bool
@@ -104,8 +140,26 @@ existeSecuenciaDeAmigos :: RedSocial -> Usuario -> Usuario -> Bool
 existeSecuenciaDeAmigos red u1 u2 = esSecuenciaAmigos secuencia red
   where
     secuencia = obtenerSecuenciaAmigos red u1 u2
+----------Ejercicio 10----------
 
--- Funciones auxiliares
+-- Devuelve una lista en la que el primer elemento es u1, el último es u2, y todos los que hay entre ellos son la secuencia obtenida por obtenerAmigosEnComun
+obtenerSecuenciaAmigos :: RedSocial -> Usuario -> Usuario -> [Usuario]
+obtenerSecuenciaAmigos red u1 u2 = u1 : amigosEnComun ++ [u2]
+  where
+    amigosEnComun = obtenerAmigosEnComun red u1 u2
+
+-- Devulve una lista en donde están todos los relacionados directos (vease relacionadosDirectos) de u1 y u2
+obtenerAmigosEnComun :: RedSocial -> Usuario -> Usuario -> [Usuario]
+obtenerAmigosEnComun ([],_,_) _ _ = []
+obtenerAmigosEnComun (u:us,rels,pubs) u1 u2 
+    | relacionadosDirecto u1 u (u:us,rels,pubs) && relacionadosDirecto u u2 (u:us,rels,pubs) = u : obtenerAmigosEnComun (us,rels,pubs) u1 u2 
+    | otherwise = obtenerAmigosEnComun (us,rels,pubs) u1 u2
+
+-- Devuelve True <=> todos los elementos de la lista tienen relacion directa con el siguiente elemnto en la lista.
+esSecuenciaAmigos :: [Usuario] -> RedSocial -> Bool
+esSecuenciaAmigos [] _ = True
+esSecuenciaAmigos [_] _ = True
+esSecuenciaAmigos (u1:u2:us) red = relacionadosDirecto u1 u2 red && esSecuenciaAmigos (u2:us) red
 
 ------------------------------------------Leo------------------------------------------
 
@@ -194,7 +248,9 @@ cadenaDeAmigos (u1:u2:us) rs
     |otherwise = False
 cadenaDeAmigos _ _ = True   
 
-
+redSocialValida :: RedSocial -> Bool
+redSocialValida ( usuarios, relaciones, publicaciones) =
+    usuariosValidos usuarios && relacionesValidas usuarios relaciones && publicacionesValidas usuarios publicaciones
 ---------------------------Agus------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 --esta funcion toma como entrada Usuario y se asegura que su resultado:hace recursion continua hasta que se agoten los usuarios de la lista. 
@@ -222,7 +278,7 @@ usuariosValidos []= True -- no tiene usuarios invalidos ni repetidos
 usuariosValidos (x: xs) = usuarioValido x && noHayIdRepetidos (x:xs) && usuariosValidos xs -- comprueba que la primer posicion se unica, si lo hace llama a usuarioValido y noHayIdRp. Si se cumple llama a la fucion usuariosValidos y devuelve true
 
 
---funcion que toma una red y una lista de usuarioas y devuelve treu si todos los usuarios pertenecen 
+--funcion que toma una red y una lista de usuarioas y devuelve true si todos los usuarios pertenecen 
 sonDeLaRed :: RedSocial -> [Usuario] -> Bool
 sonDeLaRed _[] = True -- si el usuario esta en la red devuelve True, sino:
 sonDeLaRed red (x:xs) = pertenece x (usuarios red) && sonDeLaRed red xs -- va verificando usuario por usuario sacando el primer elemento x si esta o no en la red, luego hace recursion con el resto de la lista xs
@@ -271,23 +327,5 @@ terminaCon _ [] = False
 terminaCon e [t] = e == t
 terminaCon e (t:l) = terminaCon e l
 
-----------Ejercicio 10----------
 
--- Devuelve una lista en la que el primer elemento es u1, el último es u2, y todos los que hay entre ellos son la secuencia obtenida por obtenerAmigosEnComun
-obtenerSecuenciaAmigos :: RedSocial -> Usuario -> Usuario -> [Usuario]
-obtenerSecuenciaAmigos red u1 u2 = u1 : amigosEnComun ++ [u2]
-  where
-    amigosEnComun = obtenerAmigosEnComun red u1 u2
 
--- Devulve una lista en donde están todos los relacionados directos (vease relacionadosDirectos) de u1 y u2
-obtenerAmigosEnComun :: RedSocial -> Usuario -> Usuario -> [Usuario]
-obtenerAmigosEnComun ([],_,_) _ _ = []
-obtenerAmigosEnComun (u:us,rels,pubs) u1 u2 
-    | relacionadosDirecto u1 u (u:us,rels,pubs) && relacionadosDirecto u u2 (u:us,rels,pubs) = u : obtenerAmigosEnComun (us,rels,pubs) u1 u2 
-    | otherwise = obtenerAmigosEnComun (us,rels,pubs) u1 u2
-
--- Devuelve True <=> todos los elementos de la lista tienen relacion directa con el siguiente elemnto en la lista.
-esSecuenciaAmigos :: [Usuario] -> RedSocial -> Bool
-esSecuenciaAmigos [] _ = True
-esSecuenciaAmigos [_] _ = True
-esSecuenciaAmigos (u1:u2:us) red = relacionadosDirecto u1 u2 red && esSecuenciaAmigos (u2:us) red
