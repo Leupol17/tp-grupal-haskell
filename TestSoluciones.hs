@@ -18,7 +18,7 @@ ejercicio1 =test[
 ]
 ejercicio2  = test [
 --" amigosDe 1" ~: (amigosDe redA usuario1) ~?= [usuario2, usuario4],
-   "caso1:RedSocial vacia" ~: (amigosDe redVacia usuaro1) ~?=[],
+   "caso1:RedSocial vacia" ~: (amigosDe redVacia usuario1) ~?=[],
    "caso2: el usuario1 tiene dos amigos" ~: (amigosde redA usuario1) ~?= [usuario2, usuario4],
     "caso3:el usuario2 tiene 3 amigos" ~: (amigosDe redA usuario2) ~?= [usuario1, usuario3, usuario4],
     "caso4: el usuario5 no esta en la redA" ~: (amigosDe redA usuario5) ~?= [] "El usuario no esta en la red",
