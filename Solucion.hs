@@ -37,64 +37,53 @@ likesDePublicacion :: Publicacion -> [Usuario]
 likesDePublicacion (_, _, us) = us
 
 -- Ejercicios
-{- nombresDeUsuarios :: RedSocial -> [String]
-nombresDeUsuarios red
-        |redSocialValida red = proyectarNombres(usuarios red)
-        |otherwise = []
-
-
-proyectarNombres :: [Usuario] -> [[Char]]
-proyectarNombres [] = []
-proyectarNombres ((_, nombre):us) = nombre : proyectarNombres us -}
 
 {-Devuelve un numero entero que representa la cantidad de usuarios de una red social dada, que cumplan con la condicion de ser Amigos del Usuario especificado -}
 --[EJERCICIO 1]
--- funcion auxiliar para nombresDeUsuarios. Que funciona tomando a los nombres de los usuarios y los coloca en una lista de strings
--- caso base, si no hay nombres devuelve la lista vacia 
- --ignora el primer elem de los usuarios que serian los id y me quedo solo con los nombres, a ellos los agrego a una lista recursivamente
-proyectarNombres :: [Usuario] -> [String]
+{- funcion auxiliar para nombresDeUsuarios. recorre los usuarios y acumula los nombres que no esten ya la lista proyectados-}
+proyectarNombres :: [Usuarios] -> [String] ->[String]
 proyectarNombres []=[] 
-proyectarNombres (( _ , nombres): restoDeUsuarios) = nombres : proyectarNombres restoDeUsuarios
--- toma redSocial  y devuelve una lista de strings
--- red representa una instancia de redSocial y al llamar a proyectarNombres obtiene los nombres de la lista correspondientes a esa redsocial 
+proyectarNombres (( _ , nombres): restoDeUsuarios) yaProyectados
+    | not(pertenece nombres yaProyectados) = nombres : proyectarNombres restoDeUsuarios (nombre: yaProyectados)
+    | otherwise = proyectarNombres restoDeUsuarios yaProyectados
+{-dada una redsocial, extrae todos los nombres sin repetir en una lista de string-}
 nombresDeUsuarios :: RedSocial -> [String]
 nombresDeUsuarios red = proyectarNombres (usuarios red) 
 
 --[EJERCICIO 2]
-{- funcion auxiliar que toma un usuario y una lista de relaciones en donde recorre la lista y en cada relacion comprueba si el usuario actual es 
-uno de los dos usuarios en la relacion.Si se cumple, el otro usuario se añade a la lista de amigos. Devuelve una lista con todos los usuarios 
-que estan relacionados con el actual-}
-amigos ::Usuario -> [Relacion] -> [Usuario]
-amigos usuarioActual []= []
-amigos usuarioActual ((relacion1, relacion2): rs)
-    | relacion1 == usuarioActual = relacion2 : amigos usuarioActual rs
-    |relacion2 == usuarioActual = relacion1 : amigos usuarioActual rs
-    |otherwise = amigos usuarioActual rs
+{- funcion auxiliar que por recursividad busca los amigos del usuario en la lista de relaciones.Toma relacion, usuario y uana lista de amigos del usuario en cuestion.
+Comprueba cada relacion de la lista y si el usuario que tomamos cumple estar en una relacion y el segundo no esta en la lista de amistad, entonces el contrario se añade 
+a la lista de amigos. Si el primero de los usuarios no esta en la relacion, entonces se omite. -}
+amigosDelUsuario ::[Relacion] -> Usuario -> [Usuario] ->[Usuario]
+amigosDelUsuario [] _ amigos = amigos
+amigosDelUsuario ((relacion1, relacion2): rs) usuario amigos
+    | relacion1 == usuario && not(pertenece relacion2 amigos) = amigosDelUsuario rs usuario (relacion2 : amigos)
+    |relacion2 == usuario && not(pertenece relacion1 amigos) = amigosDelUsuario rs usuario (relacion1 : amigos)
+    |otherwise = amigosDelUsuario rs usuario amigos
 
-{-si no son validos;red social valida, usuario valido y usuario que pertenece a la red social; devolvera una lista vacia. si todas se cumplen,
- llama la funcion amigos con el usuario actual y la lista de relaciones dentro de la red social para posicionar los amigos encontrados.
- Devuelve la lita de amigos del usuario en la red social -}
+{-Toma redSocial y usuario, comprueba si la red y el usuario son validos; y si dicho usuario es de la red. si ninguna de las condiciones se cumple devuelve una lista vacia
+si todas se cumplen llama a la funcion aux con las relaciones de la red, el usuario y una lista vacia de amigos.Finalmente devuelve la lsita de los amigos del usuario  -}
 amigosDe :: RedSocial -> Usuario -> [Usuario]
 amigosDe redSocial usuario
     | not(redSocialValida redSocial) || not(usuarioValido usuario) || not(pertenece usuario(usuarios redSocial)) =[]
-    | otherwise = amigos usuario(relaciones redSocial)
-
+    | otherwise = amigosDelUsuario (relacion redSocial) usuario []
+          
+--[EJERCICIO 3]
 {-Dada una red social y un usuario retorna la cantidad de amigos de ese usuario en dicha red social -}          
 cantidadDeAmigos :: RedSocial -> Usuario -> Int
 cantidadDeAmigos red usuario= cantidadDeUsuarios ( amigosDe red usuario)
 
---MOVER ESTA FUNCION A LAS AUXILIARES?
 {-Funcion que devuelve la cantidad de Usuarios en un lista de Usuarios -}
 cantidadDeUsuarios :: [Usuario] -> Int
 cantidadDeUsuarios [] = 0
 cantidadDeUsuarios (_:xs) = 1 + cantidadDeUsuarios xs 
 
+--[EJERCICIO 4]
 {-Retorna el usuario de una red social dada que tenga la mayor cantidad de Amigos -}
 usuarioConMasAmigos :: RedSocial -> Usuario
 usuarioConMasAmigos red = compararCantidadDeAmigos (head listaUsuarios) listaUsuarios red
         where listaUsuarios = usuarios red
 
---MOVER ESTA FUNCION A LAS AUXILIARES?
 {-Evalua, dado el usuario inicial de la lista, la lista de usuarios y la red, cual es el usuario con mas amigos y lo retorna-}
 compararCantidadDeAmigos :: Usuario -> [Usuario] -> RedSocial -> Usuario
 compararCantidadDeAmigos usuarioMayor [] _ = usuarioMayor
@@ -102,17 +91,16 @@ compararCantidadDeAmigos usuarioMayor (usuario:us) red
     | cantidadDeAmigos red usuario >= cantidadDeAmigos red usuarioMayor = compararCantidadDeAmigos usuario us red
     | otherwise = compararCantidadDeAmigos usuarioMayor us red
 
-
+--[EJERCICIO 5]
 {-Evalua que en una red social exista un usuario con mas de un millon de amigos, en cuyo caso retorna True, caso contrario False -}
 estaRobertoCarlos :: RedSocial -> Bool
 estaRobertoCarlos red = masDeUnMillonDeAmigos (usuarios red) red
 
---MOVER ESTA FUNCION A LAS AUXILIARES?
 {-Evalua, dada una lista de Usuarios pertenecientes a una red social y dicha red social, si alguno de los usuarios posee mas de un millon de amigos, en cuyo caso retorna True, caso contrario False -}
 masDeUnMillonDeAmigos :: [Usuario] -> RedSocial -> Bool
 masDeUnMillonDeAmigos [] red = False
 masDeUnMillonDeAmigos (x:xs) red
-    |cantidadDeAmigos red x < 1000000 = masDeUnMillonDeAmigos xs red
+    |cantidadDeAmigos red x <= 10 = masDeUnMillonDeAmigos xs red
     |otherwise = True
 
 -- describir qué hace la función: .....
