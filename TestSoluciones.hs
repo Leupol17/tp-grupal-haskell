@@ -4,19 +4,20 @@ import Test.HUnit
 import Solucion 
 
 main = runTestTT tests
-ejercicio1 =test[
+nombresDeUsuariosPrueba = test [
   " nombresDeUsuarios 1" ~: (nombresDeUsuarios redA) ~?= ["Juan","Natalia","Pedro","Mariela"],
-  
+  "caso: Red vacia" ~: (nombreDeUsuarios redVacia) ~?= [],
+  "caso: nombres de la redB" ~: (nombreDeUsuarios redB) ~?= ["Juan","Natalia","Pedro"],
 
-
-
-
-
-
+]
+proyectarNombresPrueba = test [
+  "lista vacia" ~: (proyectarNombres []) ~?= [],
+  "lista con usuariosA" ~: (proyectarNombres usuariosA []) ~?= ["Juan","Natalia","Pedro","Mariela"],
+  "lista con usuariosB" ~: (proyectarNombres usuariosA []) ~?= ["Juan","Natalia","Pedro"],
 
 
 ]
-ejercicio2  = test [
+amigosDePrueba  = test [
 --" amigosDe 1" ~: (amigosDe redA usuario1) ~?= [usuario2, usuario4],
    "caso1:RedSocial vacia" ~: (amigosDe redVacia usuario1) ~?=[],
    "caso2: el usuario1 tiene dos amigos" ~: (amigosde redA usuario1) ~?= [usuario2, usuario4],
