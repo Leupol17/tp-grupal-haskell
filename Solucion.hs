@@ -37,6 +37,8 @@ likesDePublicacion :: Publicacion -> [Usuario]
 likesDePublicacion (_, _, us) = us
 
 -- Ejercicios
+
+{-Devuelve un numero entero que representa la cantidad de usuarios de una red social dada, que cumplan con la condicion de ser Amigos del Usuario especificado -}
 --[EJERCICIO 1]
 {- funcion auxiliar para nombresDeUsuarios. recorre los usuarios y acumula los nombres que no esten ya la lista proyectados-}
 proyectarNombres :: [Usuarios] -> [String] ->[String]
@@ -66,33 +68,84 @@ amigosDe redSocial usuario
     | not(redSocialValida redSocial) || not(usuarioValido usuario) || not(pertenece usuario(usuarios redSocial)) =[]
     | otherwise = amigosDelUsuario (relacion redSocial) usuario []
           
--- describir qué hace la función: .....
+--[EJERCICIO 3]
+{-Dada una red social y un usuario retorna la cantidad de amigos de ese usuario en dicha red social -}          
 cantidadDeAmigos :: RedSocial -> Usuario -> Int
-cantidadDeAmigos = undefined
+cantidadDeAmigos red usuario= cantidadDeUsuarios ( amigosDe red usuario)
 
--- describir qué hace la función: .....
+{-Funcion que devuelve la cantidad de Usuarios en un lista de Usuarios -}
+cantidadDeUsuarios :: [Usuario] -> Int
+cantidadDeUsuarios [] = 0
+cantidadDeUsuarios (_:xs) = 1 + cantidadDeUsuarios xs 
+
+--[EJERCICIO 4]
+{-Retorna el usuario de una red social dada que tenga la mayor cantidad de Amigos -}
 usuarioConMasAmigos :: RedSocial -> Usuario
-usuarioConMasAmigos = undefined
+usuarioConMasAmigos red = compararCantidadDeAmigos (head listaUsuarios) listaUsuarios red
+        where listaUsuarios = usuarios red
 
--- describir qué hace la función: .....
+{-Evalua, dado el usuario inicial de la lista, la lista de usuarios y la red, cual es el usuario con mas amigos y lo retorna-}
+compararCantidadDeAmigos :: Usuario -> [Usuario] -> RedSocial -> Usuario
+compararCantidadDeAmigos usuarioMayor [] _ = usuarioMayor
+compararCantidadDeAmigos usuarioMayor (usuario:us) red
+    | cantidadDeAmigos red usuario >= cantidadDeAmigos red usuarioMayor = compararCantidadDeAmigos usuario us red
+    | otherwise = compararCantidadDeAmigos usuarioMayor us red
+
+--[EJERCICIO 5]
+{-Evalua que en una red social exista un usuario con mas de un millon de amigos, en cuyo caso retorna True, caso contrario False -}
 estaRobertoCarlos :: RedSocial -> Bool
-estaRobertoCarlos = undefined
+estaRobertoCarlos red = masDeUnMillonDeAmigos (usuarios red) red
+
+{-Evalua, dada una lista de Usuarios pertenecientes a una red social y dicha red social, si alguno de los usuarios posee mas de un millon de amigos, en cuyo caso retorna True, caso contrario False -}
+masDeUnMillonDeAmigos :: [Usuario] -> RedSocial -> Bool
+masDeUnMillonDeAmigos [] red = False
+masDeUnMillonDeAmigos (x:xs) red
+    |cantidadDeAmigos red x <= 10 = masDeUnMillonDeAmigos xs red
+    |otherwise = True
 
 -- describir qué hace la función: .....
 publicacionesDe :: RedSocial -> Usuario -> [Publicacion]
-publicacionesDe = undefined
+publicacionesDe red usuario = publicacionesDe' (publicaciones red) usuario
+  where
+    publicacionesDe' [] _ = []
+    publicacionesDe' (p:ps) u
+      | usuarioDePublicacion p == u && not (pertenece p ps) = p : publicacionesDe' ps u
+      | otherwise = publicacionesDe' ps u
 
--- describir qué hace la función: .....
+-- describir qué hace la función: Devuelve el resultado de la función obtenerPublicacionesQueLeGustanA, se pasa una lista vacía que sirve para mantener referencia de res
 publicacionesQueLeGustanA :: RedSocial -> Usuario -> [Publicacion]
-publicacionesQueLeGustanA = undefined
+publicacionesQueLeGustanA red us = obtenerPublicacionesQueLeGustanA red us []
 
--- describir qué hace la función: .....
+-- Devuelve todas las publicaciones de la red que tienen en su lista de likes a u:Usuario y que no pertenezcan a res:[Publicacion]
+obtenerPublicacionesQueLeGustanA :: RedSocial -> Usuario -> [Publicacion] -> [Publicacion]
+obtenerPublicacionesQueLeGustanA (_,_,[]) _ _ = []
+obtenerPublicacionesQueLeGustanA (users,rels,(p:pubs)) u res
+    | pertenece u (likesDePublicacion p) && pertenece p res == False = p : obtenerPublicacionesQueLeGustanA (users,rels,pubs) u nuevoRes
+    | otherwise = obtenerPublicacionesQueLeGustanA (users,rels,pubs) u res
+    where nuevoRes = (p:res)
+
+-- describir qué hace la función: Conmpara los elementos de la lista publicacionesQueLeGustanA red:RedSocial u1:Usuario con publicacionesQueLeGustanA red u2:Usuario
 lesGustanLasMismasPublicaciones :: RedSocial -> Usuario -> Usuario -> Bool
-lesGustanLasMismasPublicaciones = undefined
+lesGustanLasMismasPublicaciones red u1 u2 =
+    mismosElementos (publicacionesQueLeGustanA red u1) (publicacionesQueLeGustanA red u2)
 
 -- describir qué hace la función: .....
 tieneUnSeguidorFiel :: RedSocial -> Usuario -> Bool
-tieneUnSeguidorFiel = undefined
+tieneUnSeguidorFiel red usuario = tieneUnSeguidorFiel' (usuarios red) (publicacionesDe red usuario)
+  where
+    tieneUnSeguidorFiel' [] _ = False
+    tieneUnSeguidorFiel' (u:us) ps
+      | esSeguidorFiel u ps = True
+      | otherwise = tieneUnSeguidorFiel' us ps
+
+    esSeguidorFiel :: Usuario -> [Publicacion] -> Bool
+    esSeguidorFiel _ [] = True
+    esSeguidorFiel u (p:ps)
+      | not (pertenece u (likesDePublicacion p)) = False
+      | otherwise = esSeguidorFiel u ps
+
+
+
 
 -- describir qué hace la función: .....
 existeSecuenciaDeAmigos :: RedSocial -> Usuario -> Usuario -> Bool
@@ -285,6 +338,5 @@ terminaCon :: (Eq t) => t -> [t] -> Bool
 terminaCon _ [] = False
 terminaCon e [t] = e == t
 terminaCon e (t:l) = terminaCon e l
-
 
 

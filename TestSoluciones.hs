@@ -7,16 +7,17 @@ main = runTestTT tests
 nombresDeUsuariosPrueba = test [
   " nombresDeUsuarios 1" ~: (nombresDeUsuarios redA) ~?= ["Juan","Natalia","Pedro","Mariela"],
   "caso: Red vacia" ~: (nombreDeUsuarios redVacia) ~?= [],
-  "caso: nombres de la redB" ~: (nombreDeUsuarios redB) ~?= ["Juan","Natalia","Pedro"],
+  "caso: nombres de la redB" ~: (nombreDeUsuarios redB) ~?= ["Juan","Natalia","Pedro"]
 
-]
+  ]
+
 proyectarNombresPrueba = test [
   "lista vacia" ~: (proyectarNombres []) ~?= [],
   "lista con usuariosA" ~: (proyectarNombres usuariosA []) ~?= ["Juan","Natalia","Pedro","Mariela"],
-  "lista con usuariosB" ~: (proyectarNombres usuariosB []) ~?= ["Juan","Natalia","Pedro"],
+  "lista con usuariosB" ~: (proyectarNombres usuariosB []) ~?= ["Juan","Natalia","Pedro"]
 
 
-]
+  ]
 amigosDePrueba  = test [
 --" amigosDe 1" ~: (amigosDe redA usuario1) ~?= [usuario2, usuario4],
    "caso1:RedSocial vacia" ~: (amigosDe redVacia usuario1) ~?=[],
@@ -30,11 +31,7 @@ amigosDePrueba  = test [
     "CasoExtra2: usuario4 tiene tres amigos" ~: (amigosDe redA usuario4) ~?= [usuario1, usuario2, usuario3],
     "CasoExtra3: usuario2 tiene dos amigos" ~: (amigosDe redB usuario2) ~?= [usuario1, usuario3],
     "CasoExtra4: usuario3 tiene solo un amigo" ~: (amigosDe redB usuario3) ~?= [ usuario2],
-    "CasoExtra5: usuario4 no esta en la red" ~: (amigosDe redB usuario4) ~?= [] "El usuario no esta en la red",
-
-
-
-
+    "CasoExtra5: usuario4 no esta en la red" ~: (amigosDe redB usuario4) ~?= [] "El usuario no esta en la red"
     ]   
 
 
@@ -84,3 +81,5 @@ redB = (usuariosB, relacionesB, publicacionesB)
 redVacia _([],[],[])
 relacionesDuplicadas = relacionesDuplicadas ++ [relacion1_2]
 redDuplicada = (usuarioA, relacionesDuplicadas, publicacionesA)
+red1 = ([usuario1, usuario2, usuario3, usuario4, usuario5], [relacion1_2,relacion2_3,relacion3_4,relacion1_4], [])
+secuenciaUsuarios1 = [usuario1, usuario2, usuario3]
