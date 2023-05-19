@@ -24,4 +24,4 @@ relacion3_4 = (usuario3, usuario4)
 relacion1_4 = (usuario1, usuario4)
 
 red1 = ([usuario1, usuario2, usuario3, usuario4, usuario5], [relacion1_2,relacion2_3,relacion3_4,relacion1_4], [])
-secuenciaUsuarios1 = [usuario1, usuario2, usuario3, usuario4]
+secuenciaUsuarios1 = [usuario1, usuario2, usuario3]
