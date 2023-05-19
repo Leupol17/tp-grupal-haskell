@@ -63,7 +63,7 @@ publicacion1_0_3 = (usuario1,"Como estan",[])
 
 
 
-publicacion1_1 = (usuario1, "Este es mi primer post", [usuario2, usuario4])
+publicacion1_1 = (usuario1, "Este es mi primer post", [usuario2, usuario4])           
 publicacion1_2 = (usuario1, "Este es mi segundo post", [usuario4])
 publicacion1_3 = (usuario1, "Este es mi tercer post", [usuario2, usuario5])
 publicacion1_4 = (usuario1, "Este es mi cuarto post", [])
@@ -107,5 +107,5 @@ redSocial6 = ([usuario1,usuario2,usuario3], [relacion1_2,relacion1_3,relacion2_3
 redSocial7 = ([usuario1,usuario2,usuario3], [relacion1_2,relacion1_3,relacion2_3], [publicacion3_4,publicacion3_3,publicacion1_5,publicacion1_4,publicacion2_2,publicacion2_1])
 redSocial8 = ([usuario1,usuario1,usuario2,usuario2,usuario3,usuario3], [relacion1_2,relacion1_3,relacion2_3], [publicacion3_4,publicacion3_3,publicacion1_5,publicacion1_4,publicacion2_2,publicacion2_1,publicacion3_4,publicacion3_3,publicacion1_5,publicacion1_4,publicacion2_2,publicacion2_1])
 redSocial9 = ([usuario1, usuario2, usuario3,usuario4], [relacion1_2, relacion1_3], [publicacion1_7])
-redSocial10 = ([usuario1, usuario2, usuario3, usuario4], [relacion1_2, relacion1_3, relacion1_4], [publicacion1_1, publicacion1_2, publicacion1_3, publicacion1_4])
+redSocial10 = ([usuario1, usuario2, usuario3, usuario4], [relacion1_2, relacion1_3, relacion1_4], [publicacion1_1,publicacion1_6,publicacion1_7 ])
 redSocial11 = ([usuario1,usuario2,usuario3],[relacion1_2, relacion1_3],[publicacion1_9,publicacion1_6])
