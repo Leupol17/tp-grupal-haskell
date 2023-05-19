@@ -62,7 +62,7 @@ amigosDe :: RedSocial -> Usuario -> [Usuario]
 amigosDe (usuarios, relaciones, _) usuario
     | not (pertenece usuario usuarios) = []
     | otherwise = listaReversa (amigosDelUsuario relaciones usuario [])
-
+-- fue creada para dar la lista en orden correcto
 listaReversa :: [a] -> [a]
 listaReversa xs = listaReversa' xs []
   where
