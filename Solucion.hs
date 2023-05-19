@@ -84,10 +84,18 @@ tieneUnSeguidorFiel red usuario = tieneUnSeguidorFiel' (usuarios red) (publicaci
       | otherwise = tieneUnSeguidorFiel' us ps
 
     esSeguidorFiel :: Usuario -> [Publicacion] -> Bool
-    esSeguidorFiel _ [] = True
+    esSeguidorFiel _ [] = False
     esSeguidorFiel u (p:ps)
-      | not (pertenece u (likesDePublicacion p)) = False
+      | perteneceUsuario u (likesDePublicacion p) = True
       | otherwise = esSeguidorFiel u ps
+      where
+        perteneceUsuario :: Usuario -> [Usuario] -> Bool
+        perteneceUsuario _ [] = False
+        perteneceUsuario u (x:xs)
+            | u == x = True
+            | otherwise = perteneceUsuario u xs
+
+
 
 
 
