@@ -18,15 +18,15 @@ testsuiteamigosDePrueba  = test [
     "caso1:RedSocial vacia" ~: (amigosDe redVacia usuario1) ~?=[],
     "caso2: el usuario1 tiene dos amigos" ~: (amigosde redA usuario1) ~?= [usuario2, usuario4],
     "caso3:el usuario2 tiene 3 amigos" ~: (amigosDe redA usuario2) ~?= [usuario1, usuario3, usuario4],
-    "caso4: el usuario5 no esta en la redA" ~: (amigosDe redA usuario5) ~?= [] "El usuario no esta en la red",
+    "caso4: el usuario5 no esta en la redA" ~: (amigosDe redA usuario5) ~?= [] ,
     "caso5: el usuario1 tiene solo un amigo" ~: (amigosDe redB usuario2) ~?=[usuario2],
-    "caso6: el usuario5 esta presente en redB pero no tiene amigos" ~: (amigosDe redB usuario5) ~?= [] "no tiene amigos",
-    "caso7: donde haya usuarios duplicados" ~: (amigosDe redDuplicada usuario1) ~?= "Error: Usuarios duplicados",
+    "caso6: el usuario5 esta presente en redB pero no tiene amigos" ~: (amigosDe redB usuario5) ~?= [] ,
+    "caso7: donde haya usuarios duplicados" ~: (amigosDe redDuplicada usuario1) ~?= [],
     "CasoExtra1: usuario3 tiene tres amigos" ~: (amigosDe redA usuario3) ~?= [usuario1, usuario2, usuario4],
     "CasoExtra2: usuario4 tiene tres amigos" ~: (amigosDe redA usuario4) ~?= [usuario1, usuario2, usuario3],
     "CasoExtra3: usuario2 tiene dos amigos" ~: (amigosDe redB usuario2) ~?= [usuario1, usuario3],
     "CasoExtra4: usuario3 tiene solo un amigo" ~: (amigosDe redB usuario3) ~?= [ usuario2],
-    "CasoExtra5: usuario4 no esta en la red" ~: (amigosDe redB usuario4) ~?= [] "El usuario no esta en la red"
+    "CasoExtra5: usuario4 no esta en la red" ~: (amigosDe redB usuario4) ~?= [] 
 ]
 -- Ejemplos
 
