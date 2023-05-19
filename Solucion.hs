@@ -68,9 +68,7 @@ amigosDelUsuario ((relacion1, relacion2): rs) usuario amigos
 {-Toma redSocial y usuario, comprueba si la red y el usuario son validos; y si dicho usuario es de la red. si ninguna de las condiciones se cumple devuelve una lista vacia
 si todas se cumplen llama a la funcion aux con las relaciones de la red, el usuario y una lista vacia de amigos.Finalmente devuelve la lsita de los amigos del usuario  -}
 amigosDe :: RedSocial -> Usuario -> [Usuario]
-amigosDe redSocial usuario
-    | not(redSocialValida redSocial) || not(usuarioValido usuario) || not(pertenece usuario(usuarios redSocial)) =[]
-    | otherwise = amigosDelUsuario (relaciones redSocial) usuario []
+amigosDe redSocial usuario = amigosDelUsuario (relaciones redSocial) usuario []
           
 --[EJERCICIO 3]
 {-Dada una red social y un usuario retorna la cantidad de amigos de ese usuario en dicha red social -}          
@@ -107,15 +105,18 @@ masDeUnMillonDeAmigos (x:xs) red
     |cantidadDeAmigos red x <= 10 = masDeUnMillonDeAmigos xs red
     |otherwise = True
 
--- describir qué hace la función: .....
-publicacionesDe :: RedSocial -> Usuario -> [Publicacion]
-publicacionesDe red usuario = publicacionesDe' (publicaciones red) usuario
-  where
-    publicacionesDe' [] _ = []
-    publicacionesDe' (p:ps) u
-      | usuarioDePublicacion p == u && not (pertenece p ps) = p : publicacionesDe' ps u
-      | otherwise = publicacionesDe' ps u
+--[EJERCICIO 6]
+publicacionesDe :: RedSocial-> Usuario -> [Publicacion] 
+publicacionesDe red usuario 
+    | not(redSocialValida red) || not (usuarioValido usuario) || not (pertenece usuario(usuarios red)) = []
+    | otherwise = publicacionesDe' (publicaciones red) usuario
+    where
+        publicacionesDe' [] _ = []
+        publicacionesDe' (p:ps) u 
+            |usuarioDePublicacion p == u = p : publicacionesDe' ps u --si la publicacion evaluada es del usuario buscado agrega la publicacion a la lista y continua con el resto de publicaciones
+            |otherwise = publicacionesDe' ps u --si el usuario de la publicacion actual no coincide con el usuario buscado, continua con el resto de las publicaciones sin llamar nada
 
+--[EJERCICIO 7]
 -- describir qué hace la función: Devuelve el resultado de la función obtenerPublicacionesQueLeGustanA, se pasa una lista vacía que sirve para mantener referencia de res
 publicacionesQueLeGustanA :: RedSocial -> Usuario -> [Publicacion]
 publicacionesQueLeGustanA red us = obtenerPublicacionesQueLeGustanA red us []
@@ -128,54 +129,53 @@ obtenerPublicacionesQueLeGustanA (users,rels,(p:pubs)) u res
     | otherwise = obtenerPublicacionesQueLeGustanA (users,rels,pubs) u res
     where nuevoRes = (p:res)
 
+--[EJERCICIO 8]
 -- describir qué hace la función: Conmpara los elementos de la lista publicacionesQueLeGustanA red:RedSocial u1:Usuario con publicacionesQueLeGustanA red u2:Usuario
 lesGustanLasMismasPublicaciones :: RedSocial -> Usuario -> Usuario -> Bool
 lesGustanLasMismasPublicaciones red u1 u2 =
     mismosElementos (publicacionesQueLeGustanA red u1) (publicacionesQueLeGustanA red u2)
 
--- describir qué hace la función: .....
+--[EJERCICIO 9]
 tieneUnSeguidorFiel :: RedSocial -> Usuario -> Bool
-tieneUnSeguidorFiel red usuario = tieneUnSeguidorFiel' (usuarios red) (publicacionesDe red usuario)
-  where
-    tieneUnSeguidorFiel' [] _ = False
-    tieneUnSeguidorFiel' (u:us) ps
-      | esSeguidorFiel u ps = True
-      | otherwise = tieneUnSeguidorFiel' us ps
+tieneUnSeguidorFiel red usuario
+    | not (redSocialValida red) || not (usuarioValido usuario) || not (pertenece usuario (usuarios red)) = False
+    | otherwise = tieneUnSeguidorFiel' (usuarios red) (publicacionesDe red usuario)
+    where
+        tieneUnSeguidorFiel' [] _ = False
+        tieneUnSeguidorFiel' (u:us) ps
+            | esSeguidorFiel u ps = True
+            | otherwise = tieneUnSeguidorFiel' us ps
 
-    esSeguidorFiel :: Usuario -> [Publicacion] -> Bool
-    esSeguidorFiel _ [] = True
-    esSeguidorFiel u (p:ps)
-      | not (pertenece u (likesDePublicacion p)) = False
-      | otherwise = esSeguidorFiel u ps
+        esSeguidorFiel :: Usuario -> [Publicacion] -> Bool
+        esSeguidorFiel _ [] = True
+        esSeguidorFiel u (p:ps)
+            | pertenece u (likesDePublicacion p) = esSeguidorFiel u ps
+            | otherwise = False
 
-
-
-
+--[EJERCICIO 10]
 -- describir qué hace la función: .....
 existeSecuenciaDeAmigos :: RedSocial -> Usuario -> Usuario -> Bool
-existeSecuenciaDeAmigos red u1 u2 = esSecuenciaAmigos secuencia red
+existeSecuenciaDeAmigos red u1 u2 = esSecuenciaAmigos secuencia u1 u2 red
   where
     secuencia = obtenerSecuenciaAmigos red u1 u2
 
---[EJERCICIO 10]
 -- Devuelve una lista en la que el primer elemento es u1, el último es u2, y todos los que hay entre ellos son la secuencia obtenida por obtenerAmigosEnComun
 obtenerSecuenciaAmigos :: RedSocial -> Usuario -> Usuario -> [Usuario]
-obtenerSecuenciaAmigos red u1 u2 = u1 : amigosEnComun ++ [u2]
+obtenerSecuenciaAmigos red u1 u2 = u1 : amigosEnComun
   where
-    amigosEnComun = obtenerAmigosEnComun red u1 u2
+    amigosEnComun = obtenerAmigosEnComun red red u1 u2
 
 -- Devulve una lista en donde están todos los relacionados directos (vease relacionadosDirectos) de u1 y u2
-obtenerAmigosEnComun :: RedSocial -> Usuario -> Usuario -> [Usuario]
-obtenerAmigosEnComun ([],_,_) _ _ = []
-obtenerAmigosEnComun (u:us,rels,pubs) u1 u2 
-    | relacionadosDirecto u1 u (u:us,rels,pubs) && relacionadosDirecto u u2 (u:us,rels,pubs) = u : obtenerAmigosEnComun (us,rels,pubs) u1 u2 
-    | otherwise = obtenerAmigosEnComun (us,rels,pubs) u1 u2
+obtenerAmigosEnComun :: RedSocial -> RedSocial-> Usuario -> Usuario -> [Usuario]
+obtenerAmigosEnComun ([],_,_) _ _ _ = []
+obtenerAmigosEnComun (u:us,rels,pubs) red u1 u2
+    | relacionadosDirecto u u2 (u:us,rels,pubs) = [u2]
+    | relacionadosDirecto u1 u (u:us,rels,pubs) = u : obtenerAmigosEnComun (us,rels,pubs) red u u2
+    | otherwise = obtenerAmigosEnComun (us,rels,pubs) red u1 u2
 
 -- Devuelve True <=> todos los elementos de la lista tienen relacion directa con el siguiente elemnto en la lista.
-esSecuenciaAmigos :: [Usuario] -> RedSocial -> Bool
-esSecuenciaAmigos [] _ = True
-esSecuenciaAmigos [_] _ = True
-esSecuenciaAmigos (u1:u2:us) red = relacionadosDirecto u1 u2 red && esSecuenciaAmigos (u2:us) red
+esSecuenciaAmigos :: [Usuario] -> Usuario -> Usuario-> RedSocial -> Bool
+esSecuenciaAmigos us u1 u2 red = cantidadDeUsuarios us >= 2 && empiezaCon u1 us && terminaCon u2 us
 
 
 {- Evalua, dada una lista de Usuarios y una lista de Publicaciones, las funciones: 

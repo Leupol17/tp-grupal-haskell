@@ -1,6 +1,5 @@
 import Test.HUnit
 import Solucion
-import Solucion (obtenerSecuenciaAmigos)
 
 main = runTestTT tests
 
@@ -30,7 +29,7 @@ tests = test [
 
 tests10 = test [
 
-    " existeSecuenciaDeAmigos 1" ~: (existeSecuenciaDeAmigos redA usuario1 usuario3) ~?= True
+    " existeSecuenciaDeAmigos 1" ~: (obtenerSecuenciaAmigos redA usuario1 usuario3) ~?= []
     
     ]
 
