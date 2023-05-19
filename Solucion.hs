@@ -35,39 +35,43 @@ usuarioDePublicacion (u, _, _) = u
 
 likesDePublicacion :: Publicacion -> [Usuario]
 likesDePublicacion (_, _, us) = us
-
--- Ejercicios
-
-{-Devuelve un numero entero que representa la cantidad de usuarios de una red social dada, que cumplan con la condicion de ser Amigos del Usuario especificado -}
 --[EJERCICIO 1]
 {- funcion auxiliar para nombresDeUsuarios. recorre los usuarios y acumula los nombres que no esten ya la lista proyectados-}
-proyectarNombres :: [Usuarios] -> [String] ->[String]
-proyectarNombres []=[] 
-proyectarNombres (( _ , nombres): restoDeUsuarios) yaProyectados
-    | not(pertenece nombres yaProyectados) = nombres : proyectarNombres restoDeUsuarios (nombre: yaProyectados)
-    | otherwise = proyectarNombres restoDeUsuarios yaProyectados
+proyectarNombres :: [Usuario] -> [String] ->[String]
+proyectarNombres [] yaProyectados = yaProyectados 
+proyectarNombres (( _ , nombre): restoDeUsuarios) yaProyectados
+    | pertenece nombre yaProyectados = proyectarNombres restoDeUsuarios yaProyectados
+    | otherwise = proyectarNombres restoDeUsuarios (yaProyectados ++ [nombre])
+
 {-dada una redsocial, extrae todos los nombres sin repetir en una lista de string-}
 nombresDeUsuarios :: RedSocial -> [String]
-nombresDeUsuarios red = proyectarNombres (usuarios red) 
+nombresDeUsuarios (usuarios, _, _) = proyectarNombres usuarios []
 
 --[EJERCICIO 2]
 {- funcion auxiliar que por recursividad busca los amigos del usuario en la lista de relaciones.Toma relacion, usuario y uana lista de amigos del usuario en cuestion.
 Comprueba cada relacion de la lista y si el usuario que tomamos cumple estar en una relacion y el segundo no esta en la lista de amistad, entonces el contrario se añade 
 a la lista de amigos. Si el primero de los usuarios no esta en la relacion, entonces se omite. -}
-amigosDelUsuario ::[Relacion] -> Usuario -> [Usuario] ->[Usuario]
+amigosDelUsuario :: [Relacion] -> Usuario -> [Usuario] -> [Usuario]
 amigosDelUsuario [] _ amigos = amigos
-amigosDelUsuario ((relacion1, relacion2): rs) usuario amigos
-    | relacion1 == usuario && not(pertenece relacion2 amigos) = amigosDelUsuario rs usuario (relacion2 : amigos)
-    |relacion2 == usuario && not(pertenece relacion1 amigos) = amigosDelUsuario rs usuario (relacion1 : amigos)
-    |otherwise = amigosDelUsuario rs usuario amigos
+amigosDelUsuario ((usuario1, usuario2): rs) usuario amigos
+    | idDeUsuario usuario1 == idDeUsuario usuario && not (pertenece usuario2 amigos) = amigosDelUsuario rs usuario (usuario2 : amigos)
+    | idDeUsuario usuario2 == idDeUsuario usuario && not (pertenece usuario1 amigos) = amigosDelUsuario rs usuario (usuario1 : amigos)
+    | otherwise = amigosDelUsuario rs usuario amigos
 
-{-Toma redSocial y usuario, comprueba si la red y el usuario son validos; y si dicho usuario es de la red. si ninguna de las condiciones se cumple devuelve una lista vacia
-si todas se cumplen llama a la funcion aux con las relaciones de la red, el usuario y una lista vacia de amigos.Finalmente devuelve la lsita de los amigos del usuario  -}
 amigosDe :: RedSocial -> Usuario -> [Usuario]
-amigosDe redSocial usuario
-    | not(redSocialValida redSocial) || not(usuarioValido usuario) || not(pertenece usuario(usuarios redSocial)) =[]
-    | otherwise = amigosDelUsuario (relacion redSocial) usuario []
-          
+amigosDe (usuarios, relaciones, _) usuario
+    | not (pertenece usuario usuarios) = []
+    | otherwise = listaReversa (amigosDelUsuario relaciones usuario [])
+
+listaReversa :: [a] -> [a]
+listaReversa xs = listaReversa' xs []
+  where
+    listaReversa' [] reversa = reversa
+    listaReversa' (x:xs) reversa = listaReversa' xs (x:reversa)
+
+
+
+
 --[EJERCICIO 3]
 {-Dada una red social y un usuario retorna la cantidad de amigos de ese usuario en dicha red social -}          
 cantidadDeAmigos :: RedSocial -> Usuario -> Int
