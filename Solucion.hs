@@ -51,25 +51,17 @@ nombresDeUsuarios (usuarios, _, _) = proyectarNombres usuarios []
 {- funcion auxiliar que por recursividad busca los amigos del usuario en la lista de relaciones.Toma relacion, usuario y uana lista de amigos del usuario en cuestion.
 Comprueba cada relacion de la lista y si el usuario que tomamos cumple estar en una relacion y el segundo no esta en la lista de amistad, entonces el contrario se añade 
 a la lista de amigos. Si el primero de los usuarios no esta en la relacion, entonces se omite. -}
-amigosDelUsuario :: [Relacion] -> Usuario -> [Usuario] -> [Usuario]
-amigosDelUsuario [] _ amigos = amigos
-amigosDelUsuario ((usuario1, usuario2): rs) usuario amigos
-    | idDeUsuario usuario1 == idDeUsuario usuario && not (pertenece usuario2 amigos) = amigosDelUsuario rs usuario (usuario2 : amigos)
-    | idDeUsuario usuario2 == idDeUsuario usuario && not (pertenece usuario1 amigos) = amigosDelUsuario rs usuario (usuario1 : amigos)
+amigosDelUsuario ::[Relacion] -> Usuario -> [Usuario] ->[Usuario]
+amigosDelUsuario [] _ amigos = []
+amigosDelUsuario ((relacion1, relacion2): rs) usuario amigos
+    | relacion1 == usuario && (pertenece relacion2 amigos) == False = relacion2 : amigosDelUsuario rs usuario (relacion2 : amigos)
+    | relacion2 == usuario && (pertenece relacion1 amigos) == False = relacion1 : amigosDelUsuario rs usuario (relacion1 : amigos)
     | otherwise = amigosDelUsuario rs usuario amigos
 
+{-Toma redSocial y usuario, comprueba si la red y el usuario son validos; y si dicho usuario es de la red. si ninguna de las condiciones se cumple devuelve una lista vacia
+si todas se cumplen llama a la funcion aux con las relaciones de la red, el usuario y una lista vacia de amigos.Finalmente devuelve la lsita de los amigos del usuario  -}
 amigosDe :: RedSocial -> Usuario -> [Usuario]
-amigosDe (usuarios, relaciones, _) usuario
-    | not (pertenece usuario usuarios) = []
-    | otherwise = listaReversa (amigosDelUsuario relaciones usuario [])
--- fue creada para dar la lista en orden correcto
-listaReversa :: [a] -> [a]
-listaReversa xs = listaReversa' xs []
-  where
-    listaReversa' [] reversa = reversa
-    listaReversa' (x:xs) reversa = listaReversa' xs (x:reversa)
-
-
+amigosDe redSocial usuario = amigosDelUsuario (relaciones redSocial) usuario []
 
 
 --[EJERCICIO 3]
