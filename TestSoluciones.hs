@@ -5,29 +5,23 @@ import Solucion
 
 main = runTestTT tests
 
-tests = test [testsuitenombresDeUsuariosPrueba] 
+tests = test [testsuitenombresDeUsuariosPrueba,testsuiteamigosDePrueba] 
 
 testsuitenombresDeUsuariosPrueba = test [
   " nombresDeUsuarios 1" ~: (nombresDeUsuarios redA) ~?= ["Juan","Natalia","Pedro","Mariela"],
-  "caso: Red vacia" ~: mismosElementos (nombresDeUsuarios redVacia) [] ~?= True,
-  "caso: nombres de la redB" ~: (nombresDeUsuarios redB) ~?=["Juan", "Natalia", "Pedro"]
+  "caso: nombres de la redB" ~: (nombresDeUsuarios redB) ~?= ["Juan","Natalia","Pedro","Federico"]
   ]
 
 
 testsuiteamigosDePrueba  = test [
     "caso1:RedSocial vacia" ~: (amigosDe redVacia usuario1) ~?=[],
-    "caso2: el usuario1 tiene dos amigos" ~: (amigosde redA usuario1) ~?= [usuario2, usuario4],
+    "caso2: el usuario1 tiene dos amigos" ~: (amigosDe redA usuario1) ~?= [usuario2, usuario4],
     "caso3:el usuario2 tiene 3 amigos" ~: (amigosDe redA usuario2) ~?= [usuario1, usuario3, usuario4],
     "caso4: el usuario5 no esta en la redA" ~: (amigosDe redA usuario5) ~?= [] ,
-    "caso5: el usuario1 tiene solo un amigo" ~: (amigosDe redB usuario2) ~?=[usuario2],
-    "caso6: el usuario5 esta presente en redB pero no tiene amigos" ~: (amigosDe redB usuario5) ~?= [] ,
-    "caso7: donde haya usuarios duplicados" ~: (amigosDe redDuplicada usuario1) ~?= [],
-    "CasoExtra1: usuario3 tiene tres amigos" ~: (amigosDe redA usuario3) ~?= [usuario1, usuario2, usuario4],
-    "CasoExtra2: usuario4 tiene tres amigos" ~: (amigosDe redA usuario4) ~?= [usuario1, usuario2, usuario3],
-    "CasoExtra3: usuario2 tiene dos amigos" ~: (amigosDe redB usuario2) ~?= [usuario1, usuario3],
-    "CasoExtra4: usuario3 tiene solo un amigo" ~: (amigosDe redB usuario3) ~?= [ usuario2],
-    "CasoExtra5: usuario4 no esta en la red" ~: (amigosDe redB usuario4) ~?= [] 
-]
+    "caso5: el usuario5 tiene solo un amigo" ~: (amigosDe redB usuario5) ~?= [usuario6],
+    "caso6: el usuario7 esta presente en redB pero no tiene amigos" ~: (amigosDe redB usuario7) ~?= []
+    
+ ]
 -- Ejemplos
 
 usuario1 = (1, "Juan")
@@ -35,13 +29,17 @@ usuario2 = (2, "Natalia")
 usuario3 = (3, "Pedro")
 usuario4 = (4, "Mariela")
 usuario5 = (5, "Natalia")
+usuario6 = (6, "Carlos")
+usuario7 =(7,"Federico")
 
 relacion1_2 = (usuario1, usuario2)
 relacion1_3 = (usuario1, usuario3)
-relacion1_4 = (usuario4, usuario1) -- Notar que el orden en el que aparecen los usuarios es indistinto
+relacion1_4 = (usuario4, usuario1) 
 relacion2_3 = (usuario3, usuario2)
 relacion2_4 = (usuario2, usuario4)
 relacion3_4 = (usuario4, usuario3)
+relacion5_6 = (usuario5, usuario6)
+ -- Nueva relación
 
 publicacion1_1 = (usuario1, "Este es mi primer post", [usuario2, usuario4])
 publicacion1_2 = (usuario1, "Este es mi segundo post", [usuario4])
@@ -65,8 +63,8 @@ relacionesA = [relacion1_2, relacion1_4, relacion2_3, relacion2_4, relacion3_4]
 publicacionesA = [publicacion1_1, publicacion1_2, publicacion2_1, publicacion2_2, publicacion3_1, publicacion3_2, publicacion4_1, publicacion4_2]
 redA = (usuariosA, relacionesA, publicacionesA)
 
-usuariosB = [usuario1, usuario2, usuario3, usuario5]
-relacionesB = [relacion1_2, relacion2_3]
+usuariosB = [usuario1, usuario2, usuario3, usuario5, usuario7]
+relacionesB = [relacion1_2, relacion2_3,relacion5_6]
 publicacionesB = [publicacion1_3, publicacion1_4, publicacion1_5, publicacion3_1, publicacion3_2, publicacion3_3]
 redB = (usuariosB, relacionesB, publicacionesB)
 
