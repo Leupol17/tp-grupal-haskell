@@ -51,7 +51,7 @@ proyectarNombres red = obtenerProyectarNombres (usuarios red) []
 obtenerProyectarNombres :: [Usuario] -> [String] ->[String]
 obtenerProyectarNombres [] _ =[] 
 obtenerProyectarNombres (( _ , nombre): restoDeUsuarios) yaProyectados
-    | pertenece nombre yaProyectados = obtenerProyectarNombres restoDeUsuarios  yaProyectados
+    | pertenece nombre yaProyectados = obtenerProyectarNombres restoDeUsuarios yaProyectados
     | otherwise = nombre : obtenerProyectarNombres restoDeUsuarios (nombre:yaProyectados)  
 
 --[EJERCICIO 2]
@@ -155,23 +155,25 @@ tieneUnSeguidorFiel red usuario
 --[EJERCICIO 10]
 -- describir qué hace la función: .....
 existeSecuenciaDeAmigos :: RedSocial -> Usuario -> Usuario -> Bool
-existeSecuenciaDeAmigos red u1 u2 = esSecuenciaAmigos secuencia u1 u2 red
-  where
-    secuencia = obtenerSecuenciaAmigos red u1 u2
+existeSecuenciaDeAmigos red u1 u2
+    | relacionadosDirecto u1 u2 red = True
+    | otherwise = esSecuenciaAmigos secuencia u1 u2 red
+    where
+        secuencia = obtenerSecuenciaAmigos red u1 u2
 
 -- Devuelve una lista en la que el primer elemento es u1, el último es u2, y todos los que hay entre ellos son la secuencia obtenida por obtenerAmigosEnComun
 obtenerSecuenciaAmigos :: RedSocial -> Usuario -> Usuario -> [Usuario]
 obtenerSecuenciaAmigos red u1 u2 = u1 : amigosEnComun
   where
-    amigosEnComun = obtenerAmigosEnComun red red u1 u2
+    amigosEnComun = obtenerAmigosEnComun red u1 u2 [u1]
 
 -- Devulve una lista en donde están todos los relacionados directos (vease relacionadosDirectos) de u1 y u2
-obtenerAmigosEnComun :: RedSocial -> RedSocial-> Usuario -> Usuario -> [Usuario]
+obtenerAmigosEnComun :: RedSocial -> Usuario -> Usuario -> [Usuario] -> [Usuario]
 obtenerAmigosEnComun ([],_,_) _ _ _ = []
-obtenerAmigosEnComun (u:us,rels,pubs) red u1 u2
+obtenerAmigosEnComun (u:us,rels,pubs) u1 u2 res
+    | relacionadosDirecto u1 u (u:us,rels,pubs) && pertenece u res == False = u : obtenerAmigosEnComun (u:us,rels,pubs) u u2 (u:res)
     | relacionadosDirecto u u2 (u:us,rels,pubs) = [u2]
-    | relacionadosDirecto u1 u (u:us,rels,pubs) = u : obtenerAmigosEnComun (us,rels,pubs) red u u2
-    | otherwise = obtenerAmigosEnComun (us,rels,pubs) red u1 u2
+    | otherwise = obtenerAmigosEnComun (us,rels,pubs) u1 u2 res 
 
 -- Devuelve True <=> todos los elementos de la lista tienen relacion directa con el siguiente elemnto en la lista.
 esSecuenciaAmigos :: [Usuario] -> Usuario -> Usuario-> RedSocial -> Bool
